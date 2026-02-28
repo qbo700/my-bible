@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣经音频全库</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; background: #f4f7f9; margin: 0; padding: 20px; text-align: center; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 20px; }
+        .book-btn { background: #fff; border: 1px solid #ddd; padding: 15px 5px; text-decoration: none; color: #333; border-radius: 8px; font-size: 0.85rem; display: block; transition: 0.2s; }
+        .book-btn:hover { background: #27ae60; color: white; border-color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📖 圣经音频全库</h1>
+        <div class="grid">
+            <a href="book.html?id=1Kings&name=列王纪上&count=22" class="book-btn">列王纪上</a>
+            <a href="book.html?id=Genesis&name=创世记&count=50" class="book-btn">创世记</a>
+            </div>
+    </div>
+</body>
+</html>
