@@ -3,60 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>圣经音频全库 - 纯净圣言</title>
+    <title>圣经音频全库 - 聆听圣言</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f8f9fa; }
-        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #eee; margin-bottom: 30px; }
-        h1 { color: var(--primary); font-size: 2rem; margin: 10px 0; font-weight: 600; }
-        .subtitle { color: #7f8c8d; font-size: 0.9rem; letter-spacing: 1px; }
-        
-        .section-label { display: flex; align-items: center; margin: 30px 0 15px; font-weight: bold; color: var(--primary); font-size: 1.1rem; }
-        .section-label::before { content: ""; display: inline-block; width: 4px; height: 18px; background: var(--accent); margin-right: 10px; border-radius: 2px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
-        .book-btn { 
-            background: white; border: 1px solid #eef0f2; padding: 18px 5px; text-decoration: none; 
-            color: #444; border-radius: 12px; font-size: 0.95rem; text-align: center; 
-            transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .book-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .book-btn:active { transform: scale(0.95); background: #f9f9f9; }
-        
-        .footer { text-align: center; margin-top: 50px; color: #bdc3c7; font-size: 0.8rem; padding: 20px; }
+        :root { --holy-brown: #5d4037; --holy-gold: #d4af37; --bg: #fdfbf7; }
+        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: #333; }
+        .hero { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80');
+                background-size: cover; background-position: center; color: white; padding: 60px 20px; text-align: center; border-bottom: 5px solid var(--holy-gold); }
+        .hero h1 { font-size: 2.2rem; margin: 0; letter-spacing: 4px; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1rem; margin-top: 12px; opacity: 0.9; font-style: italic; }
+        .main { max-width: 1000px; margin: -25px auto 0; padding: 0 12px 60px; }
+        .testament-label { display: flex; align-items: center; justify-content: center; margin: 40px 0 20px; color: var(--holy-brown); font-weight: bold; }
+        .testament-label::before, .testament-label::after { content: ""; flex: 1; height: 1px; background: #d3d3d3; margin: 0 15px; }
+        .testament-label span { background: #eee; padding: 5px 25px; border-radius: 20px; font-size: 1.1rem; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .book-card { background: white; border: 1px solid #e2e2e2; border-radius: 12px; text-decoration: none; color: #333;
+                    height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.05); transition: 0.2s; position: relative; }
+        .book-card::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--holy-brown); border-radius: 12px 0 0 12px; opacity: 0.3; }
+        .book-card:active { transform: scale(0.95); background: #fffdf2; border-color: var(--holy-gold); }
+        .book-card .name { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
+        .book-card .count { font-size: 0.75rem; color: #999; }
+        .footer { text-align: center; padding: 40px; color: #bbb; font-size: 0.85rem; background: #f0f0f0; border-top: 1px solid #e0e0e0; }
+        @media (max-width: 480px) { .book-card .name { font-size: 1rem; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📖 圣经音频全库</h1>
-            <div class="subtitle">草必枯干，花必凋残，惟有我们神的话必永远立定</div>
-        </div>
-        
-        <div class="section-label">旧约圣经 · Old Testament</div>
-        <div class="grid" id="ot-grid"></div>
-
-        <div class="section-label">新约圣经 · New Testament</div>
-        <div class="grid" id="nt-grid"></div>
-
-        <div class="footer">行在光明中 · 纯净分享系统</div>
+    <div class="hero">
+        <h1>圣经音频全库</h1>
+        <p>“人活着不是单靠食物，乃是靠神口里所出的一切话”</p>
     </div>
-
+    <div class="main">
+        <div class="testament-label"><span>旧约圣经</span></div>
+        <div class="grid" id="ot-grid"></div>
+        <div class="testament-label"><span>新约圣经</span></div>
+        <div class="grid" id="nt-grid"></div>
+    </div>
+    <div class="footer">© 纯净圣言分布式存储系统 · 2026</div>
     <script>
-        const bible = [
-            // 旧约
-            {id:"Genesis", n:"创世记", c:50}, {id:"Exodus", n:"出埃及记", c:40}, {id:"Leviticus", n:"利未记", c:27}, {id:"Numbers", n:"民数记", c:36}, {id:"Deuteronomy", n:"申命记", c:34}, {id:"Joshua", n:"约书亚记", c:24}, {id:"Judges", n:"士师记", c:21}, {id:"Ruth", n:"路得记", c:4}, {id:"1Samuel", n:"撒母耳记上", c:31}, {id:"2Samuel", n:"撒母耳记下", c:24}, {id:"1Kings", n:"列王纪上", c:22}, {id:"2Kings", n:"列王纪下", c:25}, {id:"1Chronicles", n:"代上", c:29}, {id:"2Chronicles", n:"代下", c:36}, {id:"Ezra", n:"以斯拉记", c:10}, {id:"Nehemiah", n:"尼希米记", c:13}, {id:"Esther", n:"以斯帖记", c:10}, {id:"Job", n:"约伯记", c:42}, {id:"Psalms", n:"诗篇", c:150}, {id:"Proverbs", n:"箴言", c:31}, {id:"Ecclesiastes", n:"传道书", c:12}, {id:"SongOfSongs", n:"雅歌", c:8}, {id:"Isaiah", n:"以赛亚书", c:66}, {id:"Jeremiah", n:"耶利米书", c:52}, {id:"Lamentations", n:"耶利米哀歌", c:5}, {id:"Ezekiel", n:"以西结书", c:48}, {id:"Daniel", n:"但以理书", c:12}, {id:"Hosea", n:"何西阿书", c:14}, {id:"Joel", n:"约珥书", c:3}, {id:"Amos", n:"阿摩司书", c:9}, {id:"Obadiah", n:"俄巴底亚", c:1}, {id:"Jonah", n:"约拿书", c:4}, {id:"Micah", n:"弥迦书", c:7}, {id:"Nahum", n:"那鸿书", c:3}, {id:"Habakkuk", n:"哈巴谷书", c:3}, {id:"Zephaniah", n:"西番雅书", c:3}, {id:"Haggai", n:"哈该书", c:2}, {id:"Zechariah", n:"撒迦利亚", c:14}, {id:"Malachi", n:"玛拉基书", c:4},
-            // 新约
-            {id:"Matthew", n:"马太福音", c:28, nt:true}, {id:"Mark", n:"马可福音", c:16, nt:true}, {id:"Luke", n:"路加福音", c:24, nt:true}, {id:"John", n:"约翰福音", c:21, nt:true}, {id:"Acts", n:"使徒行传", c:28, nt:true}, {id:"Romans", n:"罗马书", c:16, nt:true}, {id:"1Corinthians", n:"林前", c:16, nt:true}, {id:"2Corinthians", n:"林后", c:13, nt:true}, {id:"Galatians", n:"加拉太书", c:6, nt:true}, {id:"Ephesians", n:"以弗所书", c:6, nt:true}, {id:"Philippians", n:"腓立比书", c:4, nt:true}, {id:"Colossians", n:"歌罗西书", c:4, nt:true}, {id:"1Thessalonians", n:"帖前", c:5, nt:true}, {id:"2Thessalonians", n:"帖后", c:3, nt:true}, {id:"1Timothy", n:"提前", c:6, nt:true}, {id:"2Timothy", n:"提后", c:4, nt:true}, {id:"Titus", n:"提多书", c:3, nt:true}, {id:"Philemon", n:"腓利门书", c:1, nt:true}, {id:"Hebrews", n:"希伯来书", c:13, nt:true}, {id:"James", n:"雅各书", c:5, nt:true}, {id:"1Peter", n:"彼前", c:5, nt:true}, {id:"2Peter", n:"彼后", c:3, nt:true}, {id:"1John", n:"约一", c:5, nt:true}, {id:"2John", n:"约二", c:1, nt:true}, {id:"3John", n:"约三", c:1, nt:true}, {id:"Jude", n:"犹大书", c:1, nt:true}, {id:"Revelation", n:"启示录", c:22, nt:true}
+        const bibleData = [
+            {id:"Genesis", n:"创世记", c:50}, {id:"Exodus", n:"出埃及记", c:40}, {id:"Leviticus", n:"利未记", c:27}, {id:"Numbers", n:"民数记", c:36}, {id:"Deuteronomy", n:"申命记", c:34}, {id:"Joshua", n:"约书亚记", c:24}, {id:"Judges", n:"士师记", c:21}, {id:"Ruth", n:"路得记", c:4}, {id:"1Samuel", n:"撒上", c:31}, {id:"2Samuel", n:"撒下", c:24}, {id:"1Kings", n:"列王纪上", c:22}, {id:"2Kings", n:"列王纪下", c:25}, {id:"1Chronicles", n:"代上", c:29}, {id:"2Chronicles", n:"代下", c:36}, {id:"Ezra", n:"以斯拉记", c:10}, {id:"Nehemiah", n:"尼希米记", c:13}, {id:"Esther", n:"以斯帖记", c:10}, {id:"Job", n:"约伯记", c:42}, {id:"Psalms", n:"诗篇", c:150}, {id:"Proverbs", n:"箴言", c:31}, {id:"Ecclesiastes", n:"传道书", c:12}, {id:"SongOfSongs", n:"雅歌", c:8}, {id:"Isaiah", n:"以赛亚书", c:66}, {id:"Jeremiah", n:"耶利米书", c:52}, {id:"Lamentations", n:"哀歌", c:5}, {id:"Ezekiel", n:"以西结书", c:48}, {id:"Daniel", n:"但以理书", c:12}, {id:"Hosea", n:"何西阿书", c:14}, {id:"Joel", n:"约珥书", c:3}, {id:"Amos", n:"阿摩司书", c:9}, {id:"Obadiah", n:"俄巴底亚", c:1}, {id:"Jonah", n:"约拿书", c:4}, {id:"Micah", n:"弥迦书", c:7}, {id:"Nahum", n:"那鸿书", c:3}, {id:"Habakkuk", n:"哈巴谷书", c:3}, {id:"Zephaniah", n:"西番雅书", c:3}, {id:"Haggai", n:"哈该书", c:2}, {id:"Zechariah", n:"撒迦利亚", c:14}, {id:"Malachi", n:"玛拉基书", c:4},
+            {id:"Matthew", n:"马太", c:28, nt:true}, {id:"Mark", n:"马可", c:16, nt:true}, {id:"Luke", n:"路加", c:24, nt:true}, {id:"John", n:"约翰", c:21, nt:true}, {id:"Acts", n:"使徒", c:28, nt:true}, {id:"Romans", n:"罗马书", c:16, nt:true}, {id:"1Corinthians", n:"林前", c:16, nt:true}, {id:"2Corinthians", n:"林后", c:13, nt:true}, {id:"Galatians", n:"加拉太", c:6, nt:true}, {id:"Ephesians", n:"以弗所", c:6, nt:true}, {id:"Philippians", n:"腓立比", c:4, nt:true}, {id:"Colossians", n:"歌罗西", c:4, nt:true}, {id:"1Thessalonians", n:"帖前", c:5, nt:true}, {id:"2Thessalonians", n:"帖后", c:3, nt:true}, {id:"1Timothy", n:"提前", c:6, nt:true}, {id:"2Timothy", n:"提后", c:4, nt:true}, {id:"Titus", n:"提多", c:3, nt:true}, {id:"Philemon", n:"腓利门", c:1, nt:true}, {id:"Hebrews", n:"希伯来", c:13, nt:true}, {id:"James", n:"雅各", c:5, nt:true}, {id:"1Peter", n:"彼前", c:5, nt:true}, {id:"2Peter", n:"彼后", c:3, nt:true}, {id:"1John", n:"约一", c:5, nt:true}, {id:"2John", n:"约二", c:1, nt:true}, {id:"3John", n:"约三", c:1, nt:true}, {id:"Jude", n:"犹大", c:1, nt:true}, {id:"Revelation", n:"启示录", c:22, nt:true}
         ];
         const otG = document.getElementById('ot-grid'), ntG = document.getElementById('nt-grid');
-        bible.forEach(b => {
+        bibleData.forEach(b => {
             const a = document.createElement('a');
-            a.className = 'book-btn';
+            a.className = 'book-card';
             a.href = `book.html?id=${b.id}&name=${encodeURIComponent(b.n)}&count=${b.c}`;
-            a.innerText = b.n;
+            a.innerHTML = `<div class="name">${b.n}</div><div class="count">${b.c}章</div>`;
             (b.nt ? ntG : otG).appendChild(a);
         });
     </script>
