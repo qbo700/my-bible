@@ -2,23 +2,48 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>圣经音频全库</title>
     <style>
-        body { font-family: "Microsoft YaHei", sans-serif; background: #f4f7f9; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 20px; }
-        .book-btn { background: #fff; border: 1px solid #ddd; padding: 15px 5px; text-decoration: none; color: #333; border-radius: 8px; font-size: 0.85rem; display: block; transition: 0.2s; }
-        .book-btn:hover { background: #27ae60; color: white; border-color: #27ae60; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 15px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: #2c3e50; font-size: 1.8rem; margin-bottom: 20px; }
+        .section-label { background: #34495e; color: white; padding: 10px 15px; border-radius: 6px; font-size: 1rem; margin: 25px 0 12px; display: block; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } /* 手机端每行3个按钮 */
+        @media (max-width: 480px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+        .book-btn { background: #fff; border: 1px solid #dcdfe6; padding: 12px 2px; text-decoration: none; color: #444; border-radius: 8px; font-size: 0.95rem; text-align: center; transition: 0.2s; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .book-btn:active { background: #27ae60; color: white; } /* 手机点击效果 */
+        .footer { text-align: center; margin-top: 40px; color: #999; font-size: 0.8rem; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📖 圣经音频全库</h1>
-        <div class="grid">
-            <a href="book.html?id=1Kings&name=列王纪上&count=22" class="book-btn">列王纪上</a>
-            <a href="book.html?id=Genesis&name=创世记&count=50" class="book-btn">创世记</a>
-            </div>
+        
+        <div class="section-label">旧约圣经</div>
+        <div class="grid" id="ot-grid"></div>
+
+        <div class="section-label">新约圣经</div>
+        <div class="grid" id="nt-grid"></div>
+
+        <div class="footer">行在光明中 · 纯净分享</div>
     </div>
+
+    <script>
+        const bible = [
+            // 旧约
+            {id:"Genesis", n:"创世记", c:50}, {id:"Exodus", n:"出埃及记", c:40}, {id:"Leviticus", n:"利未记", c:27}, {id:"Numbers", n:"民数记", c:36}, {id:"Deuteronomy", n:"申命记", c:34}, {id:"Joshua", n:"约书亚记", c:24}, {id:"Judges", n:"士师记", c:21}, {id:"Ruth", n:"路得记", c:4}, {id:"1Samuel", n:"撒母耳记上", c:31}, {id:"2Samuel", n:"撒母耳记下", c:24}, {id:"1Kings", n:"列王纪上", c:22}, {id:"2Kings", n:"列王纪下", c:25}, {id:"1Chronicles", n:"代上", c:29}, {id:"2Chronicles", n:"代下", c:36}, {id:"Ezra", n:"以斯拉记", c:10}, {id:"Nehemiah", n:"尼希米记", c:13}, {id:"Esther", n:"以斯帖记", c:10}, {id:"Job", n:"约伯记", c:42}, {id:"Psalms", n:"诗篇", c:150}, {id:"Proverbs", n:"箴言", c:31}, {id:"Ecclesiastes", n:"传道书", c:12}, {id:"SongOfSongs", n:"雅歌", c:8}, {id:"Isaiah", n:"以赛亚书", c:66}, {id:"Jeremiah", n:"耶利米书", c:52}, {id:"Lamentations", n:"耶利米哀歌", c:5}, {id:"Ezekiel", n:"以西结书", c:48}, {id:"Daniel", n:"但以理书", c:12}, {id:"Hosea", n:"何西阿书", c:14}, {id:"Joel", n:"约珥书", c:3}, {id:"Amos", n:"阿摩司书", c:9}, {id:"Obadiah", n:"俄巴底亚", c:1}, {id:"Jonah", n:"约拿书", c:4}, {id:"Micah", n:"弥迦书", c:7}, {id:"Nahum", n:"那鸿书", c:3}, {id:"Habakkuk", n:"哈巴谷书", c:3}, {id:"Zephaniah", n:"西番雅书", c:3}, {id:"Haggai", n:"哈该书", c:2}, {id:"Zechariah", n:"撒迦利亚", c:14}, {id:"Malachi", n:"玛拉基书", c:4},
+            // 新约
+            {id:"Matthew", n:"马太福音", c:28, nt:true}, {id:"Mark", n:"马可福音", c:16, nt:true}, {id:"Luke", n:"路加福音", c:24, nt:true}, {id:"John", n:"约翰福音", c:21, nt:true}, {id:"Acts", n:"使徒行传", c:28, nt:true}, {id:"Romans", n:"罗马书", c:16, nt:true}, {id:"1Corinthians", n:"林前", c:16, nt:true}, {id:"2Corinthians", n:"林后", c:13, nt:true}, {id:"Galatians", n:"加拉太书", c:6, nt:true}, {id:"Ephesians", n:"以弗所书", c:6, nt:true}, {id:"Philippians", n:"腓立比书", c:4, nt:true}, {id:"Colossians", n:"歌罗西书", c:4, nt:true}, {id:"1Thessalonians", n:"帖前", c:5, nt:true}, {id:"2Thessalonians", n:"帖后", c:3, nt:true}, {id:"1Timothy", n:"提前", c:6, nt:true}, {id:"2Timothy", n:"提后", c:4, nt:true}, {id:"Titus", n:"提多书", c:3, nt:true}, {id:"Philemon", n:"腓利门书", c:1, nt:true}, {id:"Hebrews", n:"希伯来书", c:13, nt:true}, {id:"James", n:"雅各书", c:5, nt:true}, {id:"1Peter", n:"彼前", c:5, nt:true}, {id:"2Peter", n:"彼后", c:3, nt:true}, {id:"1John", n:"约一", c:5, nt:true}, {id:"2John", n:"约二", c:1, nt:true}, {id:"3John", n:"约三", c:1, nt:true}, {id:"Jude", n:"犹大书", c:1, nt:true}, {id:"Revelation", n:"启示录", c:22, nt:true}
+        ];
+        const otG = document.getElementById('ot-grid'), ntG = document.getElementById('nt-grid');
+        bible.forEach(b => {
+            const a = document.createElement('a');
+            a.className = 'book-btn';
+            a.href = `book.html?id=${b.id}&name=${encodeURIComponent(b.n)}&count=${b.c}`;
+            a.innerText = b.n;
+            (b.nt ? ntG : otG).appendChild(a);
+        });
+    </script>
 </body>
 </html>

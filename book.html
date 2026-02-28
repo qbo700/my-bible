@@ -2,38 +2,38 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>播放中</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>正在播放</title>
     <style>
-        body { font-family: sans-serif; background: #f7f9fa; padding: 20px; }
-        .box { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
-        .info { flex: 1; font-weight: bold; color: #555; }
-        audio { flex: 2; height: 32px; }
+        body { font-family: -apple-system, sans-serif; background: #f7f9fa; margin: 0; padding: 10px; }
+        .box { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .header h2 { font-size: 1.4rem; color: #333; margin: 0; }
+        .back-btn { font-size: 1.1rem; color: #27ae60; text-decoration: none; font-weight: bold; padding: 5px; }
+        .item { padding: 20px 0; border-bottom: 1px solid #f0f0f0; }
+        .info { font-size: 1.2rem; font-weight: bold; color: #444; margin-bottom: 10px; display: block; }
+        audio { width: 100%; height: 45px; } /* 播放器更大更长 */
     </style>
 </head>
 <body>
     <div class="box">
-        <h2 id="title">加载中...</h2>
-        <a href="index.html" style="color:#27ae60; text-decoration:none;">⬅ 返回目录</a>
-        <div id="list" style="margin-top:20px;"></div>
+        <div class="header">
+            <h2 id="title">加载中</h2>
+            <a href="index.html" class="back-btn">返回</a>
+        </div>
+        <div id="list"></div>
     </div>
     <script>
         const p = new URLSearchParams(window.location.search);
-        const id = p.get('id'); // 获取 1Kings
-        const name = p.get('name');
-        const count = parseInt(p.get('count'));
-
+        const id = p.get('id'), name = p.get('name'), count = parseInt(p.get('count'));
         document.getElementById('title').innerText = name;
         const list = document.getElementById('list');
-
         for (let i = 1; i <= count; i++) {
             let num = i < 10 ? '0' + i : i;
-            // 💡 这里的链接逻辑必须和你测试成功的那个一模一样！
             let url = `https://qbo700.github.io/bible-${id}/audio/chap${num}.mp3`;
-            
             list.innerHTML += `
                 <div class="item">
-                    <div class="info">第 ${num} 章</div>
+                    <span class="info">第 ${i} 章</span>
                     <audio controls src="${url}" preload="none"></audio>
                 </div>`;
         }
