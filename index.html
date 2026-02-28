@@ -3,30 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>圣经音频全库</title>
+    <title>圣经音频全库 - 纯净圣言</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 15px; color: #333; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        h1 { text-align: center; color: #2c3e50; font-size: 1.8rem; margin-bottom: 20px; }
-        .section-label { background: #34495e; color: white; padding: 10px 15px; border-radius: 6px; font-size: 1rem; margin: 25px 0 12px; display: block; font-weight: bold; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } /* 手机端每行3个按钮 */
-        @media (max-width: 480px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-        .book-btn { background: #fff; border: 1px solid #dcdfe6; padding: 12px 2px; text-decoration: none; color: #444; border-radius: 8px; font-size: 0.95rem; text-align: center; transition: 0.2s; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .book-btn:active { background: #27ae60; color: white; } /* 手机点击效果 */
-        .footer { text-align: center; margin-top: 40px; color: #999; font-size: 0.8rem; }
+        :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f8f9fa; }
+        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #eee; margin-bottom: 30px; }
+        h1 { color: var(--primary); font-size: 2rem; margin: 10px 0; font-weight: 600; }
+        .subtitle { color: #7f8c8d; font-size: 0.9rem; letter-spacing: 1px; }
+        
+        .section-label { display: flex; align-items: center; margin: 30px 0 15px; font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+        .section-label::before { content: ""; display: inline-block; width: 4px; height: 18px; background: var(--accent); margin-right: 10px; border-radius: 2px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+        .book-btn { 
+            background: white; border: 1px solid #eef0f2; padding: 18px 5px; text-decoration: none; 
+            color: #444; border-radius: 12px; font-size: 0.95rem; text-align: center; 
+            transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .book-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .book-btn:active { transform: scale(0.95); background: #f9f9f9; }
+        
+        .footer { text-align: center; margin-top: 50px; color: #bdc3c7; font-size: 0.8rem; padding: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📖 圣经音频全库</h1>
+        <div class="header">
+            <h1>📖 圣经音频全库</h1>
+            <div class="subtitle">草必枯干，花必凋残，惟有我们神的话必永远立定</div>
+        </div>
         
-        <div class="section-label">旧约圣经</div>
+        <div class="section-label">旧约圣经 · Old Testament</div>
         <div class="grid" id="ot-grid"></div>
 
-        <div class="section-label">新约圣经</div>
+        <div class="section-label">新约圣经 · New Testament</div>
         <div class="grid" id="nt-grid"></div>
 
-        <div class="footer">行在光明中 · 纯净分享</div>
+        <div class="footer">行在光明中 · 纯净分享系统</div>
     </div>
 
     <script>

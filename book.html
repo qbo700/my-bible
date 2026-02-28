@@ -3,23 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>正在播放</title>
+    <title>播放圣言</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f7f9fa; margin: 0; padding: 10px; }
-        .box { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
-        .header h2 { font-size: 1.4rem; color: #333; margin: 0; }
-        .back-btn { font-size: 1.1rem; color: #27ae60; text-decoration: none; font-weight: bold; padding: 5px; }
-        .item { padding: 20px 0; border-bottom: 1px solid #f0f0f0; }
-        .info { font-size: 1.2rem; font-weight: bold; color: #444; margin-bottom: 10px; display: block; }
-        audio { width: 100%; height: 45px; } /* 播放器更大更长 */
+        :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f7f9fa; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 12px; }
+        .box { max-width: 700px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 20px; }
+        .header h2 { font-size: 1.6rem; color: var(--primary); margin: 0; }
+        .back-btn { font-size: 1rem; color: var(--accent); text-decoration: none; font-weight: bold; border: 1.5px solid var(--accent); padding: 5px 15px; border-radius: 30px; transition: 0.3s; }
+        .back-btn:hover { background: var(--accent); color: white; }
+        
+        .item { background: #fff; border-radius: 15px; padding: 20px; border: 1px solid #f1f1f1; margin-bottom: 15px; transition: 0.2s; }
+        .item:hover { border-color: #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .info { font-size: 1.3rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; display: block; border-left: 4px solid var(--accent); padding-left: 10px; }
+        
+        audio { width: 100%; height: 50px; margin-bottom: 15px; }
+        
+        .dl-container { display: flex; justify-content: flex-end; }
+        .dl-btn { 
+            background: var(--accent); color: white; text-decoration: none; 
+            padding: 10px 25px; border-radius: 10px; font-weight: bold; font-size: 1rem;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .dl-btn:hover { background: #219150; transform: scale(1.02); }
+        .dl-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="header">
             <h2 id="title">加载中</h2>
-            <a href="index.html" class="back-btn">返回</a>
+            <a href="index.html" class="back-btn">返回目录</a>
         </div>
         <div id="list"></div>
     </div>
@@ -35,6 +49,11 @@
                 <div class="item">
                     <span class="info">第 ${i} 章</span>
                     <audio controls src="${url}" preload="none"></audio>
+                    <div class="dl-container">
+                        <a href="${url}" download="${name}-第${num}章.mp3" class="dl-btn">
+                            📥 下载本章音频
+                        </a>
+                    </div>
                 </div>`;
         }
     </script>
