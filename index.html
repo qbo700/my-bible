@@ -5,26 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>圣经音频全库 - 聆听圣言</title>
     <style>
-        :root { --holy-brown: #5d4037; --holy-gold: #d4af37; --bg: #fdfbf7; }
-        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: #333; }
-        .hero { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80');
-                background-size: cover; background-position: center; color: white; padding: 60px 20px; text-align: center; border-bottom: 5px solid var(--holy-gold); }
-        .hero h1 { font-size: 2.2rem; margin: 0; letter-spacing: 4px; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        .hero p { font-size: 1rem; margin-top: 12px; opacity: 0.9; font-style: italic; }
-        .main { max-width: 1000px; margin: -25px auto 0; padding: 0 12px 60px; }
-        .testament-label { display: flex; align-items: center; justify-content: center; margin: 40px 0 20px; color: var(--holy-brown); font-weight: bold; }
-        .testament-label::before, .testament-label::after { content: ""; flex: 1; height: 1px; background: #d3d3d3; margin: 0 15px; }
-        .testament-label span { background: #eee; padding: 5px 25px; border-radius: 20px; font-size: 1.1rem; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .book-card { background: white; border: 1px solid #e2e2e2; border-radius: 12px; text-decoration: none; color: #333;
-                    height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.05); transition: 0.2s; position: relative; }
-        .book-card::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--holy-brown); border-radius: 12px 0 0 12px; opacity: 0.3; }
-        .book-card:active { transform: scale(0.95); background: #fffdf2; border-color: var(--holy-gold); }
-        .book-card .name { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
-        .book-card .count { font-size: 0.75rem; color: #999; }
-        .footer { text-align: center; padding: 40px; color: #bbb; font-size: 0.85rem; background: #f0f0f0; border-top: 1px solid #e0e0e0; }
-        @media (max-width: 480px) { .book-card .name { font-size: 1rem; } }
+        :root { 
+            --holy-brown: #5d4037; 
+            --holy-gold: #d4af37; 
+            --bg: #fdfbf7; 
+            --card-bg: #ffffff;
+            --text-main: #3e2723;
+        }
+        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text-main); }
+        
+        /* 顶部横幅 */
+        .hero { 
+            background: linear-gradient(to bottom, rgba(62, 39, 35, 0.7), rgba(93, 64, 55, 0.8)), 
+                        url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80');
+            background-size: cover; background-position: center; color: white; 
+            padding: 70px 20px 80px; text-align: center; border-bottom: 4px solid var(--holy-gold); 
+        }
+        .hero h1 { font-size: 2.4rem; margin: 0; letter-spacing: 5px; font-weight: 400; text-shadow: 2px 4px 8px rgba(0,0,0,0.4); }
+        .hero p { font-size: 1.05rem; margin-top: 15px; opacity: 0.9; font-style: italic; letter-spacing: 1px; }
+        
+        /* 主体布局 */
+        .main { max-width: 900px; margin: -40px auto 0; padding: 0 15px 60px; position: relative; z-index: 10; }
+        
+        /* 新旧约大标题 */
+        .testament-label { display: flex; align-items: center; justify-content: center; margin: 50px 0 30px; color: var(--holy-brown); font-weight: bold; }
+        .testament-label::before, .testament-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to right, transparent, #d4af37, transparent); opacity: 0.5; }
+        .testament-label span { background: var(--bg); border: 2px solid var(--holy-gold); padding: 8px 30px; border-radius: 30px; font-size: 1.3rem; margin: 0 15px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15); }
+        .testament-label:first-child { margin-top: 0; } /* 消除第一个顶部的多余间距 */
+        
+        /* 子分类标题 (如: 摩西五经, 历史书) */
+        .category-group { margin-bottom: 35px; background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.03); }
+        .category-title { font-size: 1.15rem; color: #8d6e63; margin-bottom: 18px; padding-left: 12px; border-left: 4px solid var(--holy-gold); font-weight: bold; display: flex; align-items: center; }
+        
+        /* 书卷网格 */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        @media (min-width: 600px) { .grid { grid-template-columns: repeat(4, 1fr); gap: 15px; } }
+        @media (min-width: 800px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+        
+        /* 独立的书卷卡片 */
+        .book-card { 
+            background: #faf9f6; border: 1px solid #f0ebe1; border-radius: 12px; text-decoration: none; color: var(--text-main);
+            height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
+        }
+        /* 顶部金色细线高光 */
+        .book-card::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 3px; background: var(--holy-gold); transform: scaleX(0); transition: transform 0.3s ease; }
+        .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(93, 64, 55, 0.08); background: #ffffff; border-color: var(--holy-gold); }
+        .book-card:hover::before { transform: scaleX(1); }
+        .book-card:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        /* 卡片内文字 */
+        .book-card .name { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+        .book-card .count { font-size: 0.75rem; color: #8d6e63; background: #f2eee8; padding: 3px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; }
+        
+        @media (max-width: 380px) { .book-card .name { font-size: 1rem; } .grid { gap: 8px; } }
+        
+        .footer { text-align: center; padding: 40px; color: #a0938e; font-size: 0.85rem; border-top: 1px solid #f0ebe1; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -32,25 +68,85 @@
         <h1>圣经音频全库</h1>
         <p>“人活着不是单靠食物，乃是靠神口里所出的一切话”</p>
     </div>
+    
     <div class="main">
         <div class="testament-label"><span>旧约圣经</span></div>
-        <div class="grid" id="ot-grid"></div>
-        <div class="testament-label"><span>新约圣经</span></div>
-        <div class="grid" id="nt-grid"></div>
+        <div id="ot-container"></div>
+        
+        <div class="testament-label" style="margin-top: 60px;"><span>新约圣经</span></div>
+        <div id="nt-container"></div>
     </div>
+    
     <div class="footer">© 纯净圣言分布式存储系统 · 2026</div>
+
     <script>
+        // 原始数据不变
         const bibleData = [
             {id:"Genesis", n:"创世记", c:50}, {id:"Exodus", n:"出埃及记", c:40}, {id:"Leviticus", n:"利未记", c:27}, {id:"Numbers", n:"民数记", c:36}, {id:"Deuteronomy", n:"申命记", c:34}, {id:"Joshua", n:"约书亚记", c:24}, {id:"Judges", n:"士师记", c:21}, {id:"Ruth", n:"路得记", c:4}, {id:"1Samuel", n:"撒母耳记上", c:31}, {id:"2Samuel", n:"撒母耳记下", c:24}, {id:"1Kings", n:"列王纪上", c:22}, {id:"2Kings", n:"列王纪下", c:25}, {id:"1Chronicles", n:"历代志上", c:29}, {id:"2Chronicles", n:"历代志下", c:36}, {id:"Ezra", n:"以斯拉记", c:10}, {id:"Nehemiah", n:"尼希米记", c:13}, {id:"Esther", n:"以斯帖记", c:10}, {id:"Job", n:"约伯记", c:42}, {id:"Psalms", n:"诗篇", c:150}, {id:"Proverbs", n:"箴言", c:31}, {id:"Ecclesiastes", n:"传道书", c:12}, {id:"SongOfSongs", n:"雅歌", c:8}, {id:"Isaiah", n:"以赛亚书", c:66}, {id:"Jeremiah", n:"耶利米书", c:52}, {id:"Lamentations", n:"耶利米哀歌", c:5}, {id:"Ezekiel", n:"以西结书", c:48}, {id:"Daniel", n:"但以理书", c:12}, {id:"Hosea", n:"何西阿书", c:14}, {id:"Joel", n:"约珥书", c:3}, {id:"Amos", n:"阿摩司书", c:9}, {id:"Obadiah", n:"俄巴底亚书", c:1}, {id:"Jonah", n:"约拿书", c:4}, {id:"Micah", n:"弥迦书", c:7}, {id:"Nahum", n:"那鸿书", c:3}, {id:"Habakkuk", n:"哈巴谷书", c:3}, {id:"Zephaniah", n:"西番雅书", c:3}, {id:"Haggai", n:"哈该书", c:2}, {id:"Zechariah", n:"撒迦利亚书", c:14}, {id:"Malachi", n:"玛拉基书", c:4},
             {id:"Matthew", n:"马太福音", c:28, nt:true}, {id:"Mark", n:"马可福音", c:16, nt:true}, {id:"Luke", n:"路加福音", c:24, nt:true}, {id:"John", n:"约翰福音", c:21, nt:true}, {id:"Acts", n:"使徒行传", c:28, nt:true}, {id:"Romans", n:"罗马书", c:16, nt:true}, {id:"1Corinthians", n:"哥林多前书", c:16, nt:true}, {id:"2Corinthians", n:"哥林多后书", c:13, nt:true}, {id:"Galatians", n:"加拉太书", c:6, nt:true}, {id:"Ephesians", n:"以弗所书", c:6, nt:true}, {id:"Philippians", n:"腓立比书", c:4, nt:true}, {id:"Colossians", n:"歌罗西书", c:4, nt:true}, {id:"1Thessalonians", n:"帖撒罗尼迦前书", c:5, nt:true}, {id:"2Thessalonians", n:"帖撒罗尼迦后书", c:3, nt:true}, {id:"1Timothy", n:"提摩太前书", c:6, nt:true}, {id:"2Timothy", n:"提摩太后书", c:4, nt:true}, {id:"Titus", n:"提多书", c:3, nt:true}, {id:"Philemon", n:"腓利门书", c:1, nt:true}, {id:"Hebrews", n:"希伯来书", c:13, nt:true}, {id:"James", n:"雅各书", c:5, nt:true}, {id:"1Peter", n:"彼得前书", c:5, nt:true}, {id:"2Peter", n:"彼得后书", c:3, nt:true}, {id:"1John", n:"约翰一书", c:5, nt:true}, {id:"2John", n:"约翰二书", c:1, nt:true}, {id:"3John", n:"约翰三书", c:1, nt:true}, {id:"Jude", n:"犹大书", c:1, nt:true}, {id:"Revelation", n:"启示录", c:22, nt:true}
         ];
-        const otG = document.getElementById('ot-grid'), ntG = document.getElementById('nt-grid');
-        bibleData.forEach(b => {
-            const a = document.createElement('a');
-            a.className = 'book-card';
-            a.href = `book.html?id=${b.id}&name=${encodeURIComponent(b.n)}&count=${b.c}`;
-            a.innerHTML = `<div class="name">${b.n}</div><div class="count">${b.c}章</div>`;
-            (b.nt ? ntG : otG).appendChild(a);
+
+        // 核心归类算法：通过设置每类的书籍数量，自动按顺序切割数据并生成分类区块
+        const categories = [
+            // 旧约 (39)
+            { label: "摩西五经", count: 5, isNt: false },
+            { label: "历史书", count: 12, isNt: false },
+            { label: "诗歌智慧书", count: 5, isNt: false },
+            { label: "大先知书", count: 5, isNt: false },
+            { label: "小先知书", count: 12, isNt: false },
+            // 新约 (27)
+            { label: "四福音书", count: 4, isNt: true },
+            { label: "教会历史", count: 1, isNt: true },
+            { label: "保罗书信", count: 13, isNt: true },
+            { label: "普通书信", count: 8, isNt: true },
+            { label: "预言书", count: 1, isNt: true }
+        ];
+
+        const otContainer = document.getElementById('ot-container');
+        const ntContainer = document.getElementById('nt-container');
+        
+        let bookCursor = 0; // 游标记录当前读到了哪卷书
+
+        categories.forEach(cat => {
+            // 1. 创建分类容器 (白底圆角区块)
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'category-group';
+            
+            // 2. 添加分类标题
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'category-title';
+            titleDiv.innerText = cat.label;
+            groupDiv.appendChild(titleDiv);
+            
+            // 3. 创建网格容器
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'grid';
+            
+            // 4. 循环抽出该类别的书卷，生成卡片
+            for(let i = 0; i < cat.count; i++) {
+                const b = bibleData[bookCursor];
+                const a = document.createElement('a');
+                a.className = 'book-card';
+                // 链接参数保持不变，完美适配你的 book.html
+                a.href = `book.html?id=${b.id}&name=${encodeURIComponent(b.n)}&count=${b.c}`;
+                
+                a.innerHTML = `
+                    <div class="name">${b.n}</div>
+                    <div class="count">${b.c} 章</div>
+                `;
+                gridDiv.appendChild(a);
+                
+                bookCursor++; // 游标往下走一本
+            }
+            
+            groupDiv.appendChild(gridDiv);
+            
+            // 5. 将整个区块放入对应的旧约/新约区域
+            if (!cat.isNt) {
+                otContainer.appendChild(groupDiv);
+            } else {
+                ntContainer.appendChild(groupDiv);
+            }
         });
     </script>
 </body>
