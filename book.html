@@ -14,16 +14,31 @@
         .chapter-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .chapter-title { font-size: 1.4rem; font-weight: bold; color: var(--primary); display: block; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; }
         
-        /* 新增：专门解决卡死的方块播放按钮 */
-        .play-btn {
-            width: 100%; padding: 15px; margin-bottom: 15px;
-            background-color: var(--primary); color: white; border: none;
-            border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-        .play-btn:active { background-color: #4a332c; transform: scale(0.98); }
+        /* ========================================= */
+        /* 以下是为你专门重写的超大按键播放器样式 */
+        /* ========================================= */
+        .custom-player { display: flex; align-items: center; gap: 18px; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 15px; }
         
-        audio { width: 100%; height: 55px; margin-bottom: 15px; }
+        /* 超大播放按键 */
+        .giant-play-btn { 
+            width: 65px; height: 65px; border-radius: 50%; background: var(--accent); color: white;
+            border: none; font-size: 26px; cursor: pointer; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); transition: 0.2s; padding-left: 5px; /* 让播放三角视觉居中 */
+        }
+        .giant-play-btn.is-playing { padding-left: 0; } /* 暂停/重试图标自动居中 */
+        .giant-play-btn:active { transform: scale(0.92); }
+        
+        /* 进度条与时间 */
+        .progress-wrapper { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .seek-bar { width: 100%; height: 6px; border-radius: 3px; background: #dcdfe6; outline: none; -webkit-appearance: none; margin-bottom: 10px; }
+        .seek-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--primary); cursor: pointer; }
+        .time-display { display: flex; justify-content: space-between; font-size: 0.85rem; color: #7f8c8d; font-weight: bold; }
+        
+        /* 彻底隐藏掉容易死锁的系统原版播放器 */
+        audio { display: none; } 
+        /* ========================================= */
+
         .dl-bar { background: var(--accent); color: white; text-decoration: none; display: block; text-align: center; 
                  padding: 18px; border-radius: 12px; font-weight: bold; font-size: 1.2rem; transition: 0.2s; }
         .dl-bar:active { background: #219150; transform: scale(0.98); }
@@ -40,37 +55,121 @@
     <script>
         const p = new URLSearchParams(window.location.search);
         const id = p.get('id'), name = p.get('name'), count = parseInt(p.get('count'));
-        document.getElementById('title').innerText = name;
+        document.getElementById('title').innerText = name || "未知书卷";
         const list = document.getElementById('list');
         
         for (let i = 1; i <= count; i++) {
             let num = i < 10 ? '0' + i : i;
             let fileName = encodeURIComponent(name) + num + ".mp3";
             let url = `https://qbo700.github.io/bible-${id}/audio/${fileName}`;
-            
-            // 为每个音频生成一个唯一的 ID，方便 JavaScript 找到它
             let audioId = `audio-${i}`;
+            let btnId = `btn-${i}`;
             
+            // 这里替换为了全新的大按键播放器结构
             list.innerHTML += `
                 <div class="chapter-card">
                     <span class="chapter-title">第 ${i} 章</span>
                     
-                    <button class="play-btn" onclick="forcePlay('${audioId}', '${url}')">▶ 点击播放 / 失败重试</button>
+                    <div class="custom-player">
+                        <button id="${btnId}" class="giant-play-btn" onclick="togglePlay('${audioId}', '${btnId}')">▶</button>
+                        
+                        <div class="progress-wrapper">
+                            <input type="range" id="seek-${i}" class="seek-bar" value="0" step="0.1" 
+                                oninput="seekAudio('${audioId}', this.value)" 
+                                onchange="seekAudio('${audioId}', this.value)">
+                            <div class="time-display">
+                                <span id="curr-${i}">00:00</span>
+                                <span id="dur-${i}">00:00</span>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <audio id="${audioId}" controls src="${url}" preload="none"></audio>
+                    <audio id="${audioId}" src="${url}" preload="none"
+                        ontimeupdate="updateTime('${audioId}', ${i})"
+                        onloadedmetadata="initTime('${audioId}', ${i})"
+                        onerror="handleError('${btnId}')"
+                        onended="resetBtn('${btnId}')"
+                    ></audio>
+                    
                     <a href="${url}" download="${name}-第${num}章.mp3" class="dl-bar">📥 下载本章音频</a>
                 </div>`;
         }
 
-        // 核心修复逻辑：强制重载音频，打破原生播放器的死锁
-        function forcePlay(audioId, audioUrl) {
-            let audioPlayer = document.getElementById(audioId);
-            // 重新赋值 src 并调用 load()，这是清理浏览器报错状态的唯一绝招
-            audioPlayer.src = audioUrl;
-            audioPlayer.load(); 
-            audioPlayer.play().catch(e => {
-                console.log("等待缓冲或需再次点击", e);
-            });
+        // =========================================
+        // 核心修复逻辑：无限重试、不断联
+        // =========================================
+        function togglePlay(audioId, btnId) {
+            let audio = document.getElementById(audioId);
+            let btn = document.getElementById(btnId);
+            
+            // 如果曾报错或卡住（显示 ↻），强制重新去抓取地址
+            if (audio.error || btn.innerText === "↻") {
+                audio.load();
+            }
+
+            if (audio.paused) {
+                // 智能联动：点击播放时，暂停其他正在播放的章节
+                document.querySelectorAll('audio').forEach(a => {
+                    if (a.id !== audioId && !a.paused) {
+                        a.pause();
+                        let otherBtn = document.getElementById('btn-' + a.id.split('-')[1]);
+                        if(otherBtn) {
+                            otherBtn.innerText = "▶";
+                            otherBtn.classList.remove('is-playing');
+                        }
+                    }
+                });
+
+                btn.innerText = "⌛"; // 加载中的沙漏图标
+                btn.classList.add('is-playing');
+                
+                audio.play().then(() => {
+                    btn.innerText = "⏸"; // 播放成功变成暂停图标
+                }).catch(e => {
+                    btn.innerText = "↻"; // 播放失败变成重试图标，你可以无限点击它
+                });
+            } else {
+                audio.pause();
+                btn.innerText = "▶";
+                btn.classList.remove('is-playing');
+            }
+        }
+
+        // 以下是配合进度条的代码
+        function formatTime(sec) {
+            if (isNaN(sec) || !isFinite(sec)) return "00:00";
+            let m = Math.floor(sec / 60);
+            let s = Math.floor(sec % 60);
+            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+        }
+
+        function initTime(audioId, index) {
+            let audio = document.getElementById(audioId);
+            document.getElementById('dur-' + index).innerText = formatTime(audio.duration);
+            document.getElementById('seek-' + index).max = audio.duration;
+        }
+
+        function updateTime(audioId, index) {
+            let audio = document.getElementById(audioId);
+            document.getElementById('curr-' + index).innerText = formatTime(audio.currentTime);
+            document.getElementById('seek-' + index).value = audio.currentTime;
+        }
+
+        function seekAudio(audioId, val) {
+            let audio = document.getElementById(audioId);
+            audio.currentTime = val;
+        }
+
+        function handleError(btnId) {
+            let btn = document.getElementById(btnId);
+            btn.innerText = "↻"; // 出错立刻显示重试图标
+            btn.classList.add('is-playing');
+        }
+
+        function resetBtn(btnId) {
+            let btn = document.getElementById(btnId);
+            btn.innerText = "▶";
+            btn.classList.remove('is-playing');
         }
     </script>
 </body>
