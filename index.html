@@ -8,59 +8,87 @@
         :root { 
             --holy-brown: #5d4037; 
             --holy-gold: #d4af37; 
-            --bg: #fdfbf7; 
+            --bg: #faf9f6; /* 极浅的羊皮纸色 */
             --card-bg: #ffffff;
             --text-main: #3e2723;
+            --accent-warm: #fdf5e6;
         }
-        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text-main); }
+        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text-main); -webkit-tap-highlight-color: transparent; }
         
         /* 顶部横幅 */
         .hero { 
-            background: linear-gradient(to bottom, rgba(62, 39, 35, 0.7), rgba(93, 64, 55, 0.8)), 
+            background: linear-gradient(to bottom, rgba(62, 39, 35, 0.75), rgba(93, 64, 55, 0.85)), 
                         url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80');
             background-size: cover; background-position: center; color: white; 
-            padding: 70px 20px 80px; text-align: center; border-bottom: 4px solid var(--holy-gold); 
+            padding: 80px 20px 90px; text-align: center; border-bottom: 5px solid var(--holy-gold); 
         }
-        .hero h1 { font-size: 2.4rem; margin: 0; letter-spacing: 5px; font-weight: 400; text-shadow: 2px 4px 8px rgba(0,0,0,0.4); }
-        .hero p { font-size: 1.05rem; margin-top: 15px; opacity: 0.9; font-style: italic; letter-spacing: 1px; }
+        .hero h1 { font-size: 2.6rem; margin: 0; letter-spacing: 6px; font-weight: 400; text-shadow: 2px 4px 10px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.1rem; margin-top: 18px; opacity: 0.95; font-style: italic; letter-spacing: 1px; }
         
         /* 主体布局 */
-        .main { max-width: 900px; margin: -40px auto 0; padding: 0 15px 60px; position: relative; z-index: 10; }
+        .main { max-width: 900px; margin: -50px auto 0; padding: 0 15px 60px; position: relative; z-index: 10; }
         
         /* 新旧约大标题 */
-        .testament-label { display: flex; align-items: center; justify-content: center; margin: 50px 0 30px; color: var(--holy-brown); font-weight: bold; }
-        .testament-label::before, .testament-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to right, transparent, #d4af37, transparent); opacity: 0.5; }
-        .testament-label span { background: var(--bg); border: 2px solid var(--holy-gold); padding: 8px 30px; border-radius: 30px; font-size: 1.3rem; margin: 0 15px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15); }
-        .testament-label:first-child { margin-top: 0; } /* 消除第一个顶部的多余间距 */
+        .testament-label { display: flex; align-items: center; justify-content: center; margin: 60px 0 40px; color: var(--holy-brown); font-weight: bold; }
+        .testament-label::before, .testament-label::after { content: ""; flex: 1; height: 2px; background: linear-gradient(to right, transparent, #d4af37, transparent); opacity: 0.6; }
+        .testament-label span { background: var(--bg); border: 2px solid var(--holy-gold); padding: 10px 35px; border-radius: 40px; font-size: 1.4rem; margin: 0 20px; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2); letter-spacing: 2px; }
         
-        /* 子分类标题 (如: 摩西五经, 历史书) */
-        .category-group { margin-bottom: 35px; background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.03); }
-        .category-title { font-size: 1.15rem; color: #8d6e63; margin-bottom: 18px; padding-left: 12px; border-left: 4px solid var(--holy-gold); font-weight: bold; display: flex; align-items: center; }
+        /* 💡 分类组容器 */
+        .category-group { margin-bottom: 25px; background: var(--card-bg); border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); overflow: hidden; border: 1px solid #f0ebe1; }
         
-        /* 书卷网格 */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        @media (min-width: 600px) { .grid { grid-template-columns: repeat(4, 1fr); gap: 15px; } }
-        @media (min-width: 800px) { .grid { grid-template-columns: repeat(5, 1fr); } }
-        
-        /* 独立的书卷卡片 */
-        .book-card { 
-            background: #faf9f6; border: 1px solid #f0ebe1; border-radius: 12px; text-decoration: none; color: var(--text-main);
-            height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
+        /* 💡 改造后的“图案分类按钮” (手风琴开关) */
+        .category-trigger-btn { 
+            width: 100%; padding: 22px 25px; background: linear-gradient(to bottom, #ffffff, #fafafa); 
+            border: none; border-bottom: 1px solid #eee; outline: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: background 0.3s; -webkit-appearance: none;
         }
-        /* 顶部金色细线高光 */
+        .category-trigger-btn:active { background: var(--accent-warm); }
+        
+        /* 按钮左侧：图标与文字 */
+        .trigger-left { display: flex; align-items: center; gap: 15px; color: var(--holy-brown); }
+        .category-icon { font-size: 2rem; width: 40px; text-align: center; } /* 高清图案 */
+        .category-name { font-size: 1.25rem; font-weight: bold; letter-spacing: 1px; }
+        
+        /* 按钮右侧：展开/折叠箭头 */
+        .trigger-arrow { font-size: 1rem; color: #bcaaa4; transition: transform 0.4s ease; font-weight: bold; }
+        
+        /* 💡 折叠网格容器 */
+        .grid-collapse-wrapper { 
+            max-height: 0; /* 默认隐藏 */
+            overflow: hidden; /* 关键：超出部分隐藏 */
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑过渡动效 */
+            background-color: #fcfcfc;
+        }
+        
+        /* 内部网格 */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 25px; border-top: 1px solid #eee; }
+        @media (min-width: 600px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 800px) { .grid { grid-template-columns: repeat(5, 1fr); gap: 18px; } }
+        
+        /* 💡 激活状态 (JS控制) */
+        .category-group.active .grid-collapse-wrapper { max-height: 1200px; /* 展开后的预估最大高度 */ }
+        .category-group.active .trigger-arrow { transform: rotate(180deg); color: var(--holy-gold); }
+        .category-group.active .category-trigger-btn { border-bottom-color: var(--holy-gold); background: var(--accent-warm); }
+
+        /* 书卷卡片保持精致风格 */
+        .book-card { 
+            background: #ffffff; border: 1px solid #f0ebe1; border-radius: 12px; text-decoration: none; color: var(--text-main);
+            height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
         .book-card::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 3px; background: var(--holy-gold); transform: scaleX(0); transition: transform 0.3s ease; }
-        .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(93, 64, 55, 0.08); background: #ffffff; border-color: var(--holy-gold); }
+        .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(93, 64, 55, 0.1); border-color: var(--holy-gold); }
         .book-card:hover::before { transform: scaleX(1); }
-        .book-card:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .book-card:active { transform: scale(0.96); }
         
-        /* 卡片内文字 */
-        .book-card .name { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
-        .book-card .count { font-size: 0.75rem; color: #8d6e63; background: #f2eee8; padding: 3px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; }
+        .book-card .name { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
+        .book-card .count { font-size: 0.75rem; color: #a1887f; background: #fdf5e6; padding: 3px 12px; border-radius: 20px; font-weight: bold; }
         
-        @media (max-width: 380px) { .book-card .name { font-size: 1rem; } .grid { gap: 8px; } }
+        @media (max-width: 400px) { .category-icon { font-size: 1.7rem; } .category-name { font-size: 1.1rem; } .grid { gap: 10px; padding: 15px; } .book-card { height: 95px; } .book-card .name { font-size: 1rem; } }
         
-        .footer { text-align: center; padding: 40px; color: #a0938e; font-size: 0.85rem; border-top: 1px solid #f0ebe1; margin-top: 20px; }
+        .footer { text-align: center; padding: 50px 20px; color: #a0938e; font-size: 0.9rem; border-top: 1px solid #f0ebe1; margin-top: 30px; background: #f5f3ef; }
     </style>
 </head>
 <body>
@@ -73,7 +101,7 @@
         <div class="testament-label"><span>旧约圣经</span></div>
         <div id="ot-container"></div>
         
-        <div class="testament-label" style="margin-top: 60px;"><span>新约圣经</span></div>
+        <div class="testament-label"><span>新约圣经</span></div>
         <div id="nt-container"></div>
     </div>
     
@@ -86,67 +114,87 @@
             {id:"Matthew", n:"马太福音", c:28, nt:true}, {id:"Mark", n:"马可福音", c:16, nt:true}, {id:"Luke", n:"路加福音", c:24, nt:true}, {id:"John", n:"约翰福音", c:21, nt:true}, {id:"Acts", n:"使徒行传", c:28, nt:true}, {id:"Romans", n:"罗马书", c:16, nt:true}, {id:"1Corinthians", n:"哥林多前书", c:16, nt:true}, {id:"2Corinthians", n:"哥林多后书", c:13, nt:true}, {id:"Galatians", n:"加拉太书", c:6, nt:true}, {id:"Ephesians", n:"以弗所书", c:6, nt:true}, {id:"Philippians", n:"腓立比书", c:4, nt:true}, {id:"Colossians", n:"歌罗西书", c:4, nt:true}, {id:"1Thessalonians", n:"帖撒罗尼迦前书", c:5, nt:true}, {id:"2Thessalonians", n:"帖撒罗尼迦后书", c:3, nt:true}, {id:"1Timothy", n:"提摩太前书", c:6, nt:true}, {id:"2Timothy", n:"提摩太后书", c:4, nt:true}, {id:"Titus", n:"提多书", c:3, nt:true}, {id:"Philemon", n:"腓利门书", c:1, nt:true}, {id:"Hebrews", n:"希伯来书", c:13, nt:true}, {id:"James", n:"雅各书", c:5, nt:true}, {id:"1Peter", n:"彼得前书", c:5, nt:true}, {id:"2Peter", n:"彼得后书", c:3, nt:true}, {id:"1John", n:"约翰一书", c:5, nt:true}, {id:"2John", n:"约翰二书", c:1, nt:true}, {id:"3John", n:"约翰三书", c:1, nt:true}, {id:"Jude", n:"犹大书", c:1, nt:true}, {id:"Revelation", n:"启示录", c:22, nt:true}
         ];
 
-        // 核心归类算法：通过设置每类的书籍数量，自动按顺序切割数据并生成分类区块
+        // 💡 归类算法 + 精选的高清 Unicode 图案
         const categories = [
             // 旧约 (39)
-            { label: "摩西五经", count: 5, isNt: false },
-            { label: "历史书", count: 12, isNt: false },
-            { label: "诗歌智慧书", count: 5, isNt: false },
-            { label: "大先知书", count: 5, isNt: false },
-            { label: "小先知书", count: 12, isNt: false },
+            { label: "摩西五经", icon: "📜", count: 5, isNt: false }, // 律法卷轴
+            { label: "历史书", icon: "🏰", count: 12, isNt: false }, // 古代城堡
+            { label: "诗歌智慧书", icon: "🎶", count: 5, isNt: false }, // 音乐琴谱
+            { label: "大先知书", icon: "📢", count: 5, isNt: false }, // 号角宣告
+            { label: "小先知书", icon: "🕊️", count: 12, isNt: false }, // 和平鸽子
             // 新约 (27)
-            { label: "四福音书", count: 4, isNt: true },
-            { label: "教会历史", count: 1, isNt: true },
-            { label: "保罗书信", count: 13, isNt: true },
-            { label: "普通书信", count: 8, isNt: true },
-            { label: "预言书", count: 1, isNt: true }
+            { label: "四福音书", icon: "✝️", count: 4, isNt: true }, // 十字圣架
+            { label: "教会历史", icon: "👣", count: 1, isNt: true }, // 使徒脚踪
+            { label: "保罗书信", icon: "✉️", count: 13, isNt: true }, // 书信
+            { label: "普通书信", icon: "🤝", count: 8, isNt: true }, // 彼此相爱
+            { label: "预言书", icon: "🔥", count: 1, isNt: true } // 启示之火
         ];
 
         const otContainer = document.getElementById('ot-container');
         const ntContainer = document.getElementById('nt-container');
         
-        let bookCursor = 0; // 游标记录当前读到了哪卷书
+        let bookCursor = 0; 
 
-        categories.forEach(cat => {
-            // 1. 创建分类容器 (白底圆角区块)
+        categories.forEach((cat, index) => {
+            // 💡 1. 创建整体容器 (category-group)
             const groupDiv = document.createElement('div');
             groupDiv.className = 'category-group';
+            // 给前几个分类默认激活（展开），方便用户一进来能看到东西
+            if(bookCursor < 17) groupDiv.classList.add('active'); 
             
-            // 2. 添加分类标题
-            const titleDiv = document.createElement('div');
-            titleDiv.className = 'category-title';
-            titleDiv.innerText = cat.label;
-            groupDiv.appendChild(titleDiv);
+            // 💡 2. 创建图案分类按钮 (category-trigger-btn)
+            const triggerBtn = document.createElement('button');
+            triggerBtn.className = 'category-trigger-btn';
             
-            // 3. 创建网格容器
+            // 按钮左侧 (图标 + 名字)
+            const leftDiv = document.createElement('div');
+            leftDiv.className = 'trigger-left';
+            leftDiv.innerHTML = `<span class="category-icon">${cat.icon}</span><span class="category-name">${cat.label}</span>`;
+            
+            // 按钮右侧 (箭头)
+            const arrowSpan = document.createElement('span');
+            arrowSpan.className = 'trigger-arrow';
+            arrowSpan.innerText = "▼";
+            
+            triggerBtn.appendChild(leftDiv);
+            triggerBtn.appendChild(arrowSpan);
+            
+            // 💡 3. 添加点击互动事件
+            triggerBtn.onclick = function() {
+                // 实现“手风琴”效果：点击当前，关闭其他（可选，如果你想让用户一次只能开一个）
+                /* document.querySelectorAll('.category-group').forEach(group => {
+                    if(group !== groupDiv) group.classList.remove('active');
+                });
+                */
+                // 切换当前的激活状态
+                groupDiv.classList.toggle('active');
+            };
+            
+            groupDiv.appendChild(triggerBtn);
+            
+            // 💡 4. 创建折叠网格包装器 (grid-collapse-wrapper)
+            const collapseWrapper = document.createElement('div');
+            collapseWrapper.className = 'grid-collapse-wrapper';
+            
+            // 内部网格
             const gridDiv = document.createElement('div');
             gridDiv.className = 'grid';
             
-            // 4. 循环抽出该类别的书卷，生成卡片
             for(let i = 0; i < cat.count; i++) {
                 const b = bibleData[bookCursor];
                 const a = document.createElement('a');
                 a.className = 'book-card';
-                // 链接参数保持不变，完美适配你的 book.html
                 a.href = `book.html?id=${b.id}&name=${encodeURIComponent(b.n)}&count=${b.c}`;
-                
-                a.innerHTML = `
-                    <div class="name">${b.n}</div>
-                    <div class="count">${b.c} 章</div>
-                `;
+                a.innerHTML = `<div class="name">${b.n}</div><div class="count">${b.c} 章</div>`;
                 gridDiv.appendChild(a);
-                
-                bookCursor++; // 游标往下走一本
+                bookCursor++; 
             }
             
-            groupDiv.appendChild(gridDiv);
+            collapseWrapper.appendChild(gridDiv);
+            groupDiv.appendChild(collapseWrapper);
             
-            // 5. 将整个区块放入对应的旧约/新约区域
-            if (!cat.isNt) {
-                otContainer.appendChild(groupDiv);
-            } else {
-                ntContainer.appendChild(groupDiv);
-            }
+            // 💡 5. 放入对应区域
+            (!cat.isNt ? otContainer : ntContainer).appendChild(groupDiv);
         });
     </script>
 </body>
