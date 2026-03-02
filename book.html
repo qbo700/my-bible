@@ -3,93 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>播放页 - 圣经音库</title>
+    <title>播放控制 - 圣经音库</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #fdfdfd; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { width: 90%; max-width: 400px; text-align: center; padding: 30px; border: 1px solid #d2d2d7; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); background: white; }
-        h2 { font-weight: 600; margin-bottom: 20px; color: #1d1d1f; }
-        select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #d2d2d7; font-size: 16px; margin-bottom: 15px; background: #f5f5f7; }
+        body { font-family: -apple-system, sans-serif; background: #f5f5f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { width: 90%; max-width: 400px; text-align: center; padding: 25px; border-radius: 20px; background: white; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 1px solid #d2d2d7; }
+        h2 { font-weight: 600; margin: 10px 0 20px 0; color: #1d1d1f; }
+        select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #d2d2d7; font-size: 16px; margin-bottom: 20px; background: #f5f5f7; -webkit-appearance: none; }
         
-        /* 改进的按钮样式 */
-        .btn-play { 
-            width: 100%; padding: 12px; background-color: #0071e3; color: white; border: none; 
-            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 15px;
+        /* 播放/重试按钮 */
+        .play-btn { 
+            width: 100%; padding: 15px; background-color: #0071e3; color: white; border: none; 
+            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
+            transition: all 0.2s ease;
         }
-        .btn-play:active { background-color: #005bb7; }
-        
-        audio { width: 100%; margin-top: 10px; }
-        .nav { margin-bottom: 25px; display: block; text-decoration: none; color: #0071e3; font-size: 15px; }
-        #info { color:#86868b; font-size:13px; margin-top:15px; min-height: 1.2em; }
-        .error { color: #ff3b30; }
+        .play-btn:active { transform: scale(0.97); background-color: #005bb7; }
+        .play-btn.loading { background-color: #86868b; cursor: not-allowed; }
+        .play-btn.error { background-color: #ff3b30; }
+
+        audio { width: 100%; height: 45px; }
+        .nav-link { margin-bottom: 20px; display: inline-block; text-decoration: none; color: #0071e3; font-size: 14px; }
+        #log { color:#86868b; font-size:12px; margin-top:15px; background: #f9f9f9; padding: 10px; border-radius: 8px; text-align: left; word-break: break-all; }
     </style>
 </head>
 <body>
     <div class="card">
-        <a href="index.html" class="nav">《 返回目录</a>
-        <h2 id="bookName">书卷加载中...</h2>
+        <a href="index.html" class="nav-link">《 返回目录</a>
+        <h2 id="bookName">书卷加载中</h2>
         
-        <select id="chapterSelect" onchange="initAudio()"></select>
+        <select id="chapterSelect"></select>
         
-        <button id="playBtn" class="btn-play" onclick="manualPlay()">点击播放 / 重试</button>
+        <button id="mainBtn" class="play-btn" onclick="startPlay()">点击播放</button>
         
-        <audio id="ap" controls></audio>
+        <audio id="player" controls></audio>
         
-        <p id="info"></p>
+        <div id="log">等待操作...</div>
     </div>
 
     <script>
-        const p = new URLSearchParams(window.location.search);
-        const name = p.get('name');
-        const total = parseInt(p.get('chapters'));
-        const folder = p.get('folder');
+        // 1. 获取参数（增加防错机制）
+        const urlParams = new URLSearchParams(window.location.search);
+        const bName = urlParams.get('name') || "未知书卷";
+        const bFolder = urlParams.get('folder') || "";
+        const bChapters = parseInt(urlParams.get('chapters')) || 1; // 默认至少有1章
 
-        document.getElementById('bookName').innerText = name;
         const sel = document.getElementById('chapterSelect');
-        const info = document.getElementById('info');
-        const audio = document.getElementById('ap');
+        const btn = document.getElementById('mainBtn');
+        const audio = document.getElementById('player');
+        const log = document.getElementById('log');
 
-        // 初始化章节下拉框
-        for(let i=1; i<=total; i++) {
-            let o = document.createElement('option');
-            let v = i.toString().padStart(2, '0');
-            o.value = v; o.innerText = `第 ${i} 章`;
-            sel.appendChild(o);
+        document.getElementById('bookName').innerText = bName;
+
+        // 2. 生成章节下拉列表（立即执行，防止“消失”）
+        function buildChapters() {
+            sel.innerHTML = "";
+            for (let i = 1; i <= bChapters; i++) {
+                let v = i.toString().padStart(2, '0');
+                let opt = new Option(`第 ${i} 章`, v);
+                sel.add(opt);
+            }
         }
+        buildChapters();
 
-        // 切换章节时调用的函数
-        function initAudio() {
-            const c = sel.value;
-            // 重要：这里是关键！如果音频在 T1，你需要一个能访问到 T1 的地址。
-            // 如果你在家内网使用，可以用 T1 的内网 IP，如 http://192.168.1.19/audio/...
-            // 如果你在外网使用，这里需要填你的 Cpolar 映射地址或者 T1 的直连地址。
-            const src = `./audio/${folder}/${name}${c}.mp3`; 
+        // 3. 核心播放函数：支持无限次重复点击
+        function startPlay() {
+            const chap = sel.value;
+            // 路径拼装
+            const audioUrl = `./audio/${bFolder}/${bName}${chap}.mp3`;
             
-            audio.src = src;
-            audio.load(); // 强制加载新资源
-            info.innerText = `已准备: ${name} 第 ${c} 章`;
-            info.className = ""; 
+            // UI 状态更新
+            btn.innerText = "正在加载...";
+            btn.className = "play-btn loading";
+            log.innerText = "尝试连接: " + audioUrl;
+            log.style.color = "#86868b";
+
+            // 强制重载音频资源
+            audio.src = audioUrl;
+            audio.load(); 
+
+            // 执行播放
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    btn.innerText = "正在播放";
+                    btn.className = "play-btn";
+                    log.innerText = "成功播放: " + bName + " 第 " + chap + " 章";
+                }).catch(error => {
+                    // 播放失败，不锁死，允许再次点击
+                    btn.innerText = "播放失败，再次点击重试";
+                    btn.className = "play-btn error";
+                    log.innerText = "错误: " + error.message + " (请检查 T1 是否在线或路径是否正确)";
+                    log.style.color = "#ff3b30";
+                });
+            }
         }
 
-        // 按钮点击播放
-        function manualPlay() {
-            info.innerText = "正在尝试加载音频...";
-            audio.play().then(() => {
-                info.innerText = "正在播放: " + name + " 第 " + sel.value + " 章";
-                info.className = "";
-            }).catch(e => {
-                console.error("播放失败:", e);
-                info.innerText = "播放失败！请检查 T1 是否在线或链接是否正确";
-                info.className = "error";
-            });
-        }
-
-        // 监听错误，不锁死页面
-        audio.onerror = function() {
-            info.innerText = "文件读取失败，请点击按钮重试";
-            info.className = "error";
+        // 4. 监听切换章节，重置按钮状态
+        sel.onchange = function() {
+            btn.innerText = "点击播放";
+            btn.className = "play-btn";
+            log.innerText = "已切换章节，请点击播放";
         };
 
-        window.onload = initAudio;
+        // 5. 监听音频底层报错
+        audio.onerror = function() {
+            btn.innerText = "文件无法读取，点击重试";
+            btn.className = "play-btn error";
+            log.innerText = "底层错误: 找不到音频文件。请确认 audio/" + bFolder + " 路径下有文件。";
+        };
     </script>
 </body>
 </html>
