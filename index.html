@@ -8,87 +8,118 @@
         :root { 
             --holy-brown: #5d4037; 
             --holy-gold: #d4af37; 
-            --bg: #faf9f6; /* 极浅的羊皮纸色 */
-            --card-bg: #ffffff;
-            --text-main: #3e2723;
-            --accent-warm: #fdf5e6;
+            /* 💡 漫画风配色 */
+            --comic-ink: #311b15;
+            --comic-paper: #fffcf2; /* 浅羊皮纸色 */
+            --comic-accent: #fdf5e6;
+            
+            /* 💡 SVG 漫画波点暗纹背景 (哈夫顿点) */
+            --bg-dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='2' cy='2' r='1'%3E%3C/circle%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='7' cy='7' r='1'%3E%3C/circle%3E%3C/svg%3E");
+            
+            /* 💡 SVG 分类按钮的动态波浪纹背景 */
+            --bg-waves: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath fill='%23faf4e5' d='M0 160V120.3C13.3 118 26.6 115.7 39.9 107C53.2 98.3 66.5 83.2 79.8 77C93.1 70.8 106.4 73.5 119.7 77.2C133 80.9 146.3 85.6 160 81.3V160H0Z'%3E%3C/path%3E%3C/svg%3E");
+
+            /* 💡 SVG 书卷卡片的粗糙描边 */
+            --comic-border: 2px solid #333333;
         }
-        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text-main); -webkit-tap-highlight-color: transparent; }
         
-        /* 顶部横幅 */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; 
+            background-color: var(--comic-paper); 
+            background-image: var(--bg-dots); /* 应用全页面波点 */
+            margin: 0; padding: 0; color: var(--comic-ink); 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        /* 顶部横幅：增加漫画对话框风格的边框 */
         .hero { 
-            background: linear-gradient(to bottom, rgba(62, 39, 35, 0.75), rgba(93, 64, 55, 0.85)), 
+            background: linear-gradient(to bottom, rgba(62, 39, 35, 0.8), rgba(93, 64, 55, 0.9)), 
                         url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80');
             background-size: cover; background-position: center; color: white; 
-            padding: 80px 20px 90px; text-align: center; border-bottom: 5px solid var(--holy-gold); 
+            padding: 90px 20px 100px; text-align: center; 
+            border-bottom: 5px solid #333; /* 粗墨线边框 */
+            position: relative;
         }
-        .hero h1 { font-size: 2.6rem; margin: 0; letter-spacing: 6px; font-weight: 400; text-shadow: 2px 4px 10px rgba(0,0,0,0.5); }
-        .hero p { font-size: 1.1rem; margin-top: 18px; opacity: 0.95; font-style: italic; letter-spacing: 1px; }
+        .hero h1 { font-size: 2.8rem; margin: 0; letter-spacing: 7px; font-weight: 400; text-shadow: 4px 6px 15px rgba(0,0,0,0.6); }
+        .hero p { font-size: 1.2rem; margin-top: 20px; opacity: 0.95; font-style: italic; letter-spacing: 1.5px; }
         
         /* 主体布局 */
-        .main { max-width: 900px; margin: -50px auto 0; padding: 0 15px 60px; position: relative; z-index: 10; }
+        .main { max-width: 950px; margin: -60px auto 0; padding: 0 15px 70px; position: relative; z-index: 10; }
         
         /* 新旧约大标题 */
-        .testament-label { display: flex; align-items: center; justify-content: center; margin: 60px 0 40px; color: var(--holy-brown); font-weight: bold; }
-        .testament-label::before, .testament-label::after { content: ""; flex: 1; height: 2px; background: linear-gradient(to right, transparent, #d4af37, transparent); opacity: 0.6; }
-        .testament-label span { background: var(--bg); border: 2px solid var(--holy-gold); padding: 10px 35px; border-radius: 40px; font-size: 1.4rem; margin: 0 20px; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2); letter-spacing: 2px; }
+        .testament-label { display: flex; align-items: center; justify-content: center; margin: 70px 0 50px; color: var(--holy-brown); font-weight: bold; }
+        .testament-label span { background: var(--bg); border: 3px solid #333; /* 粗描边 */ padding: 12px 40px; border-radius: 40px; font-size: 1.5rem; margin: 0 20px; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); letter-spacing: 3px; background-color: var(--comic-paper); }
         
         /* 💡 分类组容器 */
-        .category-group { margin-bottom: 25px; background: var(--card-bg); border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); overflow: hidden; border: 1px solid #f0ebe1; }
+        .category-group { margin-bottom: 30px; background: #ffffff; border-radius: 20px; box-shadow: 8px 10px 0 rgba(93, 64, 55, 0.06); /* 漫画风硬阴影 */ overflow: hidden; border: 3px solid #333; /* 漫画风格全描边 */ }
         
-        /* 💡 改造后的“图案分类按钮” (手风琴开关) */
+        /* 💡 改造后的“插画分类按钮” (带波浪纹背景) */
         .category-trigger-btn { 
-            width: 100%; padding: 22px 25px; background: linear-gradient(to bottom, #ffffff, #fafafa); 
-            border: none; border-bottom: 1px solid #eee; outline: none; cursor: pointer;
+            width: 100%; padding: 25px; 
+            background: linear-gradient(to right, #ffffff 60%, var(--comic-accent)), 
+                        var(--bg-waves); /* 应用金色波浪纹暗纹 */
+            background-size: cover; background-position: center;
+            border: none; border-bottom: 3px solid #eee; outline: none; cursor: pointer;
             display: flex; align-items: center; justify-content: space-between;
-            transition: background 0.3s; -webkit-appearance: none;
+            transition: all 0.3s; -webkit-appearance: none;
         }
-        .category-trigger-btn:active { background: var(--accent-warm); }
+        .category-trigger-btn:active { background: #fdf2d0; transform: translateY(2px); }
         
-        /* 按钮左侧：图标与文字 */
-        .trigger-left { display: flex; align-items: center; gap: 15px; color: var(--holy-brown); }
-        .category-icon { font-size: 2rem; width: 40px; text-align: center; } /* 高清图案 */
-        .category-name { font-size: 1.25rem; font-weight: bold; letter-spacing: 1px; }
+        .trigger-left { display: flex; align-items: center; gap: 18px; color: #333; }
+        .category-icon { font-size: 2.3rem; width: 45px; text-align: center; color: var(--holy-gold); filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); } /* 矢量金色插画效果 */
+        .category-name { font-size: 1.35rem; font-weight: bold; letter-spacing: 1.5px; color: #333; text-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
         
-        /* 按钮右侧：展开/折叠箭头 */
-        .trigger-arrow { font-size: 1rem; color: #bcaaa4; transition: transform 0.4s ease; font-weight: bold; }
+        .trigger-arrow { font-size: 1.1rem; color: #999; transition: transform 0.4s ease; font-weight: bold; }
         
-        /* 💡 折叠网格容器 */
-        .grid-collapse-wrapper { 
-            max-height: 0; /* 默认隐藏 */
-            overflow: hidden; /* 关键：超出部分隐藏 */
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑过渡动效 */
-            background-color: #fcfcfc;
-        }
+        /* 折叠网格容器 */
+        .grid-collapse-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1); background-color: #fafafa; background-image: var(--bg-dots); /* 网格内也应用波点 */ }
         
         /* 内部网格 */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 25px; border-top: 1px solid #eee; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 30px; border-top: 3px solid #eee; }
         @media (min-width: 600px) { .grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (min-width: 800px) { .grid { grid-template-columns: repeat(5, 1fr); gap: 18px; } }
+        @media (min-width: 850px) { .grid { grid-template-columns: repeat(5, 1fr); gap: 20px; } }
         
         /* 💡 激活状态 (JS控制) */
-        .category-group.active .grid-collapse-wrapper { max-height: 1200px; /* 展开后的预估最大高度 */ }
+        .category-group.active .grid-collapse-wrapper { max-height: 1500px; /* 展开高度加大，容纳更多书 */ }
         .category-group.active .trigger-arrow { transform: rotate(180deg); color: var(--holy-gold); }
-        .category-group.active .category-trigger-btn { border-bottom-color: var(--holy-gold); background: var(--accent-warm); }
+        .category-group.active .category-trigger-btn { border-bottom-color: #333; /* 展开时高亮描边 */ background: #fdf2d0; }
 
-        /* 书卷卡片保持精致风格 */
+        /* 💡 改造后的书卷卡片 (完全漫画插画风格) */
         .book-card { 
-            background: #ffffff; border: 1px solid #f0ebe1; border-radius: 12px; text-decoration: none; color: var(--text-main);
-            height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: all 0.3s ease; position: relative; overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            background: #ffffff; 
+            border: 3px solid #333; /* 粗粗的手工墨线描边 */
+            border-radius: 12px; text-decoration: none; color: #333;
+            height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* 爆发性的悬浮效果 */
+            position: relative; overflow: hidden;
+            box-shadow: 4px 5px 0 rgba(0,0,0,0.05); /* 漫画分镜格硬阴影 */
+            background-image: var(--bg-dots); /* 卡片内部哈夫顿波点暗纹 */
         }
-        .book-card::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 3px; background: var(--holy-gold); transform: scaleX(0); transition: transform 0.3s ease; }
-        .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(93, 64, 55, 0.1); border-color: var(--holy-gold); }
-        .book-card:hover::before { transform: scaleX(1); }
-        .book-card:active { transform: scale(0.96); }
         
-        .book-card .name { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
-        .book-card .count { font-size: 0.75rem; color: #a1887f; background: #fdf5e6; padding: 3px 12px; border-radius: 20px; font-weight: bold; }
+        /* 💡 悬浮时的“速度线条 Speed Lines”金色边框 */
+        .book-card::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: 3px dashed var(--holy-gold); transform: scale(1.1); transition: all 0.3s ease; opacity: 0; z-index: -1; border-radius: 12px; }
         
-        @media (max-width: 400px) { .category-icon { font-size: 1.7rem; } .category-name { font-size: 1.1rem; } .grid { gap: 10px; padding: 15px; } .book-card { height: 95px; } .book-card .name { font-size: 1rem; } }
+        .book-card:hover { transform: translateY(-8px) rotate(2deg); box-shadow: 12px 15px 0 rgba(93, 64, 55, 0.12); border-color: var(--holy-gold); }
+        .book-card:hover::before { transform: scale(1); opacity: 1; z-index: 10; pointer-events: none; } /* 触发金色虚线边框 */
         
-        .footer { text-align: center; padding: 50px 20px; color: #a0938e; font-size: 0.9rem; border-top: 1px solid #f0ebe1; margin-top: 30px; background: #f5f3ef; }
+        .book-card:active { transform: scale(0.92) rotate(-1deg); }
+        
+        /* 书卷文字 */
+        .book-card .name { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: #333; text-shadow: 1px 1px 0 rgba(0,0,0,0.05); z-index: 5; }
+        
+        /* 💡 改造后的“漫画对话框风格”章节标签 */
+        .book-card .count { 
+            font-size: 0.8rem; color: #311b15; 
+            background: #ffffff; border: 2px solid #333; /* 漫画对话框描边 */ 
+            padding: 4px 14px; border-radius: 20px; font-weight: bold; 
+            position: relative; z-index: 5; background-color: var(--holy-gold); 
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1); /* 对话框小阴影 */
+        }
+        
+        @media (max-width: 450px) { .category-icon { font-size: 2rem; width: 35px; } .category-name { font-size: 1.15rem; } .grid { gap: 12px; padding: 20px; } .book-card { height: 100px; } .book-card .name { font-size: 1rem; } .hero h1 { font-size: 2.2rem; } .testament-label span { font-size: 1.3rem; padding: 10px 30px; } }
+        
+        .footer { text-align: center; padding: 60px 20px; color: #a0938e; font-size: 0.95rem; border-top: 3px solid #333; margin-top: 40px; background: #fafafa; background-image: var(--bg-dots); }
     </style>
 </head>
 <body>
@@ -108,26 +139,26 @@
     <div class="footer">© 纯净圣言分布式存储系统 · 2026</div>
 
     <script>
-        // 原始数据不变
+        // 原始数据保持完全不变
         const bibleData = [
             {id:"Genesis", n:"创世记", c:50}, {id:"Exodus", n:"出埃及记", c:40}, {id:"Leviticus", n:"利未记", c:27}, {id:"Numbers", n:"民数记", c:36}, {id:"Deuteronomy", n:"申命记", c:34}, {id:"Joshua", n:"约书亚记", c:24}, {id:"Judges", n:"士师记", c:21}, {id:"Ruth", n:"路得记", c:4}, {id:"1Samuel", n:"撒母耳记上", c:31}, {id:"2Samuel", n:"撒母耳记下", c:24}, {id:"1Kings", n:"列王纪上", c:22}, {id:"2Kings", n:"列王纪下", c:25}, {id:"1Chronicles", n:"历代志上", c:29}, {id:"2Chronicles", n:"历代志下", c:36}, {id:"Ezra", n:"以斯拉记", c:10}, {id:"Nehemiah", n:"尼希米记", c:13}, {id:"Esther", n:"以斯帖记", c:10}, {id:"Job", n:"约伯记", c:42}, {id:"Psalms", n:"诗篇", c:150}, {id:"Proverbs", n:"箴言", c:31}, {id:"Ecclesiastes", n:"传道书", c:12}, {id:"SongOfSongs", n:"雅歌", c:8}, {id:"Isaiah", n:"以赛亚书", c:66}, {id:"Jeremiah", n:"耶利米书", c:52}, {id:"Lamentations", n:"耶利米哀歌", c:5}, {id:"Ezekiel", n:"以西结书", c:48}, {id:"Daniel", n:"但以理书", c:12}, {id:"Hosea", n:"何西阿书", c:14}, {id:"Joel", n:"约珥书", c:3}, {id:"Amos", n:"阿摩司书", c:9}, {id:"Obadiah", n:"俄巴底亚书", c:1}, {id:"Jonah", n:"约拿书", c:4}, {id:"Micah", n:"弥迦书", c:7}, {id:"Nahum", n:"那鸿书", c:3}, {id:"Habakkuk", n:"哈巴谷书", c:3}, {id:"Zephaniah", n:"西番雅书", c:3}, {id:"Haggai", n:"哈该书", c:2}, {id:"Zechariah", n:"撒迦利亚书", c:14}, {id:"Malachi", n:"玛拉基书", c:4},
             {id:"Matthew", n:"马太福音", c:28, nt:true}, {id:"Mark", n:"马可福音", c:16, nt:true}, {id:"Luke", n:"路加福音", c:24, nt:true}, {id:"John", n:"约翰福音", c:21, nt:true}, {id:"Acts", n:"使徒行传", c:28, nt:true}, {id:"Romans", n:"罗马书", c:16, nt:true}, {id:"1Corinthians", n:"哥林多前书", c:16, nt:true}, {id:"2Corinthians", n:"哥林多后书", c:13, nt:true}, {id:"Galatians", n:"加拉太书", c:6, nt:true}, {id:"Ephesians", n:"以弗所书", c:6, nt:true}, {id:"Philippians", n:"腓立比书", c:4, nt:true}, {id:"Colossians", n:"歌罗西书", c:4, nt:true}, {id:"1Thessalonians", n:"帖撒罗尼迦前书", c:5, nt:true}, {id:"2Thessalonians", n:"帖撒罗尼迦后书", c:3, nt:true}, {id:"1Timothy", n:"提摩太前书", c:6, nt:true}, {id:"2Timothy", n:"提摩太后书", c:4, nt:true}, {id:"Titus", n:"提多书", c:3, nt:true}, {id:"Philemon", n:"腓利门书", c:1, nt:true}, {id:"Hebrews", n:"希伯来书", c:13, nt:true}, {id:"James", n:"雅各书", c:5, nt:true}, {id:"1Peter", n:"彼得前书", c:5, nt:true}, {id:"2Peter", n:"彼得后书", c:3, nt:true}, {id:"1John", n:"约翰一书", c:5, nt:true}, {id:"2John", n:"约翰二书", c:1, nt:true}, {id:"3John", n:"约翰三书", c:1, nt:true}, {id:"Jude", n:"犹大书", c:1, nt:true}, {id:"Revelation", n:"启示录", c:22, nt:true}
         ];
 
-        // 💡 归类算法 + 精选的高清 Unicode 图案
+        // 高清图案分类数据
         const categories = [
             // 旧约 (39)
-            { label: "摩西五经", icon: "📜", count: 5, isNt: false }, // 律法卷轴
-            { label: "历史书", icon: "🏰", count: 12, isNt: false }, // 古代城堡
-            { label: "诗歌智慧书", icon: "🎶", count: 5, isNt: false }, // 音乐琴谱
-            { label: "大先知书", icon: "📢", count: 5, isNt: false }, // 号角宣告
-            { label: "小先知书", icon: "🕊️", count: 12, isNt: false }, // 和平鸽子
+            { label: "摩西五经", icon: "📜", count: 5, isNt: false },
+            { label: "历史书", icon: "🏰", count: 12, isNt: false },
+            { label: "诗歌智慧书", icon: "🎶", count: 5, isNt: false },
+            { label: "大先知书", icon: "📢", count: 5, isNt: false },
+            { label: "小先知书", icon: "🕊️", count: 12, isNt: false },
             // 新约 (27)
-            { label: "四福音书", icon: "✝️", count: 4, isNt: true }, // 十字圣架
-            { label: "教会历史", icon: "👣", count: 1, isNt: true }, // 使徒脚踪
-            { label: "保罗书信", icon: "✉️", count: 13, isNt: true }, // 书信
-            { label: "普通书信", icon: "🤝", count: 8, isNt: true }, // 彼此相爱
-            { label: "预言书", icon: "🔥", count: 1, isNt: true } // 启示之火
+            { label: "四福音书", icon: "✝️", count: 4, isNt: true },
+            { label: "教会历史", icon: "👣", count: 1, isNt: true },
+            { label: "保罗书信", icon: "✉️", count: 13, isNt: true },
+            { label: "普通书信", icon: "🤝", count: 8, isNt: true },
+            { label: "预言书", icon: "🔥", count: 1, isNt: true }
         ];
 
         const otContainer = document.getElementById('ot-container');
@@ -136,22 +167,18 @@
         let bookCursor = 0; 
 
         categories.forEach((cat, index) => {
-            // 💡 1. 创建整体容器 (category-group)
             const groupDiv = document.createElement('div');
             groupDiv.className = 'category-group';
-            // 给前几个分类默认激活（展开），方便用户一进来能看到东西
-            if(bookCursor < 17) groupDiv.classList.add('active'); 
+            // 💡 为了好看，默认只展开旧约五经和新约福音，其他收起，突出重点
+            if(bookCursor === 0 || bookCursor === 39) groupDiv.classList.add('active'); 
             
-            // 💡 2. 创建图案分类按钮 (category-trigger-btn)
             const triggerBtn = document.createElement('button');
             triggerBtn.className = 'category-trigger-btn';
             
-            // 按钮左侧 (图标 + 名字)
             const leftDiv = document.createElement('div');
             leftDiv.className = 'trigger-left';
             leftDiv.innerHTML = `<span class="category-icon">${cat.icon}</span><span class="category-name">${cat.label}</span>`;
             
-            // 按钮右侧 (箭头)
             const arrowSpan = document.createElement('span');
             arrowSpan.className = 'trigger-arrow';
             arrowSpan.innerText = "▼";
@@ -159,24 +186,15 @@
             triggerBtn.appendChild(leftDiv);
             triggerBtn.appendChild(arrowSpan);
             
-            // 💡 3. 添加点击互动事件
             triggerBtn.onclick = function() {
-                // 实现“手风琴”效果：点击当前，关闭其他（可选，如果你想让用户一次只能开一个）
-                /* document.querySelectorAll('.category-group').forEach(group => {
-                    if(group !== groupDiv) group.classList.remove('active');
-                });
-                */
-                // 切换当前的激活状态
                 groupDiv.classList.toggle('active');
             };
             
             groupDiv.appendChild(triggerBtn);
             
-            // 💡 4. 创建折叠网格包装器 (grid-collapse-wrapper)
             const collapseWrapper = document.createElement('div');
             collapseWrapper.className = 'grid-collapse-wrapper';
             
-            // 内部网格
             const gridDiv = document.createElement('div');
             gridDiv.className = 'grid';
             
@@ -184,7 +202,9 @@
                 const b = bibleData[bookCursor];
                 const a = document.createElement('a');
                 a.className = 'book-card';
+                // 完美兼容旧代码的 book.html，无需任何改动
                 a.href = `book.html?id=${b.id}&name=${encodeURIComponent(b.n)}&count=${b.c}`;
+                
                 a.innerHTML = `<div class="name">${b.n}</div><div class="count">${b.c} 章</div>`;
                 gridDiv.appendChild(a);
                 bookCursor++; 
@@ -193,7 +213,6 @@
             collapseWrapper.appendChild(gridDiv);
             groupDiv.appendChild(collapseWrapper);
             
-            // 💡 5. 放入对应区域
             (!cat.isNt ? otContainer : ntContainer).appendChild(groupDiv);
         });
     </script>
