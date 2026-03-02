@@ -3,88 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>播放 - 圣经音库</title>
+    <title>播放中</title>
     <style>
-        /* 保持你最喜欢的原版简约风格 */
-        body { font-family: -apple-system, sans-serif; background: #f5f5f7; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { width: 90%; max-width: 400px; text-align: center; padding: 30px; border: 1px solid #d2d2d7; border-radius: 20px; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        h2 { font-weight: 600; margin-bottom: 20px; color: #1d1d1f; }
-        select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #d2d2d7; font-size: 16px; margin-bottom: 20px; outline: none; background: #f5f5f7; }
+        /* 完全保留原来的极简干净风格 */
+        body { font-family: -apple-system, sans-serif; background: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { width: 90%; max-width: 400px; text-align: center; padding: 20px; border: 1px solid #d2d2d7; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        h2 { font-weight: 600; margin-bottom: 20px; }
+        select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #d2d2d7; font-size: 16px; margin-bottom: 20px; outline: none; }
         
-        /* 这里的方块播放按钮：你可以重复点击它 */
-        .play-btn { 
-            width: 100%; padding: 15px; background-color: #0071e3; color: white; border: none; 
-            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
+        /* 新增：方块播放/重试按钮 */
+        .square-btn {
+            width: 100%; padding: 12px; background-color: #0071e3; color: white; border: none;
+            border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px;
         }
-        .play-btn:active { background-color: #005bb7; }
-        
+        .square-btn:active { background-color: #005bb7; }
+
         audio { width: 100%; }
         .nav { margin-bottom: 30px; display: block; text-decoration: none; color: #0071e3; font-size: 14px; }
-        #status { color:#86868b; font-size:12px; margin-top:15px; }
     </style>
 </head>
 <body>
     <div class="card">
         <a href="index.html" class="nav">《 返回目录</a>
-        <h2 id="bookName">书卷加载中...</h2>
+        <h2 id="bookName">加载中...</h2>
         
-        <select id="chapterSelect" onchange="prepareAudio()"></select>
+        <select id="chapterSelect" onchange="changeChapter()"></select>
         
-        <button class="play-btn" onclick="manualPlay()">点击播放 / 重试</button>
+        <button class="square-btn" onclick="forcePlay()">▶ 点击播放 / 重试</button>
         
         <audio id="ap" controls></audio>
-        <p id="status"></p>
+        
+        <p id="info" style="color:#86868b; font-size:12px; margin-top:15px;"></p>
     </div>
 
     <script>
-        // 获取 index.html 传过来的参数
-        const params = new URLSearchParams(window.location.search);
-        const name = params.get('name') || "未知";
-        const total = parseInt(params.get('chapters')) || 1;
-        const folder = params.get('folder') || "";
+        // 完全沿用你最初没出错的逻辑
+        const p = new URLSearchParams(window.location.search);
+        const name = p.get('name');
+        const total = parseInt(p.get('chapters'));
+        const folder = p.get('folder');
 
-        document.getElementById('bookName').innerText = name;
+        // 如果名字抓不到，给个默认提示
+        document.getElementById('bookName').innerText = name || "请从目录进入";
         const sel = document.getElementById('chapterSelect');
-        const audio = document.getElementById('ap');
-        const status = document.getElementById('status');
 
-        // 1. 立即生成下拉框，确保它不会不见
-        for(let i=1; i<=total; i++) {
+        // 稳定生成下拉框 (防错：如果没有总章数，默认生成1章)
+        let loopTotal = total ? total : 1;
+        for(let i=1; i<=loopTotal; i++) {
             let o = document.createElement('option');
             let v = i.toString().padStart(2, '0');
-            o.value = v; o.innerText = `第 ${i} 章`;
+            o.value = v; 
+            o.innerText = `第 ${i} 章`;
             sel.appendChild(o);
         }
 
-        // 2. 准备音频（切换章节时调用）
-        function prepareAudio() {
-            const chap = sel.value;
-            // 路径：audio/文件夹/书名01.mp3
-            audio.src = `./audio/${folder}/${name}${chap}.mp3`;
-            audio.load(); // 强制加载，清理缓存
-            status.innerText = "已就绪，等待播放";
+        const audio = document.getElementById('ap');
+        const info = document.getElementById('info');
+
+        // 切换下拉框时：只换地址，不自动播放（防止卡死）
+        function changeChapter() {
+            const c = sel.value;
+            audio.src = `./audio/${folder}/${name}${c}.mp3`;
+            info.innerText = `已准备：${name} 第 ${c} 章`;
         }
 
-        // 3. 核心功能：手动播放/重试按钮
-        function manualPlay() {
-            // 如果还没加载地址（比如刚打开页面），先加载一下
-            if (!audio.src || audio.src === window.location.href) {
-                prepareAudio();
+        // 点击方块按钮：强制重新加载并播放（核心修复点）
+        function forcePlay() {
+            // 如果因为某些原因音频地址空了，先补上
+            if (!audio.src || audio.src.endsWith("html")) {
+                changeChapter();
             }
             
-            status.innerText = "正在尝试播放...";
+            // 解决必须刷新的绝招：强制 load() 一次
+            audio.load(); 
+            info.innerText = "正在连接音频...";
             
-            // 尝试播放并捕获错误
+            // 尝试播放
             audio.play().then(() => {
-                status.innerText = "正在播放: " + name + " 第 " + sel.value + " 章";
-            }).catch(e => {
-                console.log("播放失败，可再次点击按钮重试");
-                status.innerText = "播放未成功，请检查文件或再次点击重试";
+                info.innerText = `正在播放：${name} 第 ${sel.value} 章`;
+            }).catch(() => {
+                info.innerText = "加载失败，请直接再次点击蓝色的重试按钮";
             });
         }
 
-        // 页面初始化
-        window.onload = prepareAudio;
+        // 页面刚打开时，准备第一章
+        window.onload = changeChapter;
     </script>
 </body>
 </html>
