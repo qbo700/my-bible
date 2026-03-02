@@ -2,92 +2,76 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>播放中</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>聆听圣言</title>
     <style>
-        /* 完全保留原来的极简干净风格 */
-        body { font-family: -apple-system, sans-serif; background: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { width: 90%; max-width: 400px; text-align: center; padding: 20px; border: 1px solid #d2d2d7; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        h2 { font-weight: 600; margin-bottom: 20px; }
-        select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #d2d2d7; font-size: 16px; margin-bottom: 20px; outline: none; }
+        :root { --primary: #5d4037; --accent: #27ae60; --bg: #f8f9fa; }
+        body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 12px; }
+        .box { max-width: 700px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; margin-bottom: 25px; }
+        .header h2 { font-size: 1.7rem; color: var(--primary); margin: 0; }
+        .back-btn { font-size: 1rem; color: #7f8c8d; text-decoration: none; border: 1.5px solid #dcdfe6; padding: 6px 18px; border-radius: 30px; font-weight: bold; }
+        .chapter-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .chapter-title { font-size: 1.4rem; font-weight: bold; color: var(--primary); display: block; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; }
         
-        /* 新增：方块播放/重试按钮 */
-        .square-btn {
-            width: 100%; padding: 12px; background-color: #0071e3; color: white; border: none;
-            border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px;
+        /* 新增：专门解决卡死的方块播放按钮 */
+        .play-btn {
+            width: 100%; padding: 15px; margin-bottom: 15px;
+            background-color: var(--primary); color: white; border: none;
+            border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
         }
-        .square-btn:active { background-color: #005bb7; }
-
-        audio { width: 100%; }
-        .nav { margin-bottom: 30px; display: block; text-decoration: none; color: #0071e3; font-size: 14px; }
+        .play-btn:active { background-color: #4a332c; transform: scale(0.98); }
+        
+        audio { width: 100%; height: 55px; margin-bottom: 15px; }
+        .dl-bar { background: var(--accent); color: white; text-decoration: none; display: block; text-align: center; 
+                 padding: 18px; border-radius: 12px; font-weight: bold; font-size: 1.2rem; transition: 0.2s; }
+        .dl-bar:active { background: #219150; transform: scale(0.98); }
     </style>
 </head>
 <body>
-    <div class="card">
-        <a href="index.html" class="nav">《 返回目录</a>
-        <h2 id="bookName">加载中...</h2>
-        
-        <select id="chapterSelect" onchange="changeChapter()"></select>
-        
-        <button class="square-btn" onclick="forcePlay()">▶ 点击播放 / 重试</button>
-        
-        <audio id="ap" controls></audio>
-        
-        <p id="info" style="color:#86868b; font-size:12px; margin-top:15px;"></p>
+    <div class="box">
+        <div class="header">
+            <h2 id="title">加载中</h2>
+            <a href="index.html" class="back-btn">返回目录</a>
+        </div>
+        <div id="list"></div>
     </div>
-
     <script>
-        // 完全沿用你最初没出错的逻辑
         const p = new URLSearchParams(window.location.search);
-        const name = p.get('name');
-        const total = parseInt(p.get('chapters'));
-        const folder = p.get('folder');
-
-        // 如果名字抓不到，给个默认提示
-        document.getElementById('bookName').innerText = name || "请从目录进入";
-        const sel = document.getElementById('chapterSelect');
-
-        // 稳定生成下拉框 (防错：如果没有总章数，默认生成1章)
-        let loopTotal = total ? total : 1;
-        for(let i=1; i<=loopTotal; i++) {
-            let o = document.createElement('option');
-            let v = i.toString().padStart(2, '0');
-            o.value = v; 
-            o.innerText = `第 ${i} 章`;
-            sel.appendChild(o);
+        const id = p.get('id'), name = p.get('name'), count = parseInt(p.get('count'));
+        document.getElementById('title').innerText = name;
+        const list = document.getElementById('list');
+        
+        for (let i = 1; i <= count; i++) {
+            let num = i < 10 ? '0' + i : i;
+            let fileName = encodeURIComponent(name) + num + ".mp3";
+            let url = `https://qbo700.github.io/bible-${id}/audio/${fileName}`;
+            
+            // 为每个音频生成一个唯一的 ID，方便 JavaScript 找到它
+            let audioId = `audio-${i}`;
+            
+            list.innerHTML += `
+                <div class="chapter-card">
+                    <span class="chapter-title">第 ${i} 章</span>
+                    
+                    <button class="play-btn" onclick="forcePlay('${audioId}', '${url}')">▶ 点击播放 / 失败重试</button>
+                    
+                    <audio id="${audioId}" controls src="${url}" preload="none"></audio>
+                    <a href="${url}" download="${name}-第${num}章.mp3" class="dl-bar">📥 下载本章音频</a>
+                </div>`;
         }
 
-        const audio = document.getElementById('ap');
-        const info = document.getElementById('info');
-
-        // 切换下拉框时：只换地址，不自动播放（防止卡死）
-        function changeChapter() {
-            const c = sel.value;
-            audio.src = `./audio/${folder}/${name}${c}.mp3`;
-            info.innerText = `已准备：${name} 第 ${c} 章`;
-        }
-
-        // 点击方块按钮：强制重新加载并播放（核心修复点）
-        function forcePlay() {
-            // 如果因为某些原因音频地址空了，先补上
-            if (!audio.src || audio.src.endsWith("html")) {
-                changeChapter();
-            }
-            
-            // 解决必须刷新的绝招：强制 load() 一次
-            audio.load(); 
-            info.innerText = "正在连接音频...";
-            
-            // 尝试播放
-            audio.play().then(() => {
-                info.innerText = `正在播放：${name} 第 ${sel.value} 章`;
-            }).catch(() => {
-                info.innerText = "加载失败，请直接再次点击蓝色的重试按钮";
+        // 核心修复逻辑：强制重载音频，打破原生播放器的死锁
+        function forcePlay(audioId, audioUrl) {
+            let audioPlayer = document.getElementById(audioId);
+            // 重新赋值 src 并调用 load()，这是清理浏览器报错状态的唯一绝招
+            audioPlayer.src = audioUrl;
+            audioPlayer.load(); 
+            audioPlayer.play().catch(e => {
+                console.log("等待缓冲或需再次点击", e);
             });
         }
-
-        // 页面刚打开时，准备第一章
-        window.onload = changeChapter;
     </script>
 </body>
 </html>
