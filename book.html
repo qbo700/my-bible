@@ -6,11 +6,15 @@
     <title>聆听圣言</title>
     <style>
         :root { --primary: #5d4037; --accent: #27ae60; --bg: #f8f9fa; }
-        body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 12px; }
+        body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 12px; -webkit-tap-highlight-color: transparent; }
         .box { max-width: 700px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; margin-bottom: 25px; }
         .header h2 { font-size: 1.7rem; color: var(--primary); margin: 0; }
-        .back-btn { font-size: 1rem; color: #7f8c8d; text-decoration: none; border: 1.5px solid #dcdfe6; padding: 6px 18px; border-radius: 30px; font-weight: bold; }
+        
+        /* 💡 略微优化了返回按钮的点击手感 */
+        .back-btn { font-size: 1rem; color: #7f8c8d; text-decoration: none; border: 1.5px solid #dcdfe6; padding: 6px 18px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.2s; background: transparent; }
+        .back-btn:active { background: #f0f0f0; transform: scale(0.95); }
+        
         .chapter-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .chapter-title { font-size: 1.4rem; font-weight: bold; color: var(--primary); display: block; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; }
         
@@ -32,31 +36,42 @@
         .seek-bar { width: 100%; height: 6px; border-radius: 3px; background: #dcdfe6; outline: none; -webkit-appearance: none; margin-bottom: 8px; }
         .seek-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); cursor: pointer; }
         
-        /* 新增：时间、倍速、下载 放在同一行 */
+        /* 时间、倍速、下载 放在同一行 */
         .controls-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #7f8c8d; font-weight: bold; }
         .center-tools { display: flex; align-items: center; gap: 10px; }
         
-        /* 倍速选择器样式 */
         .speed-select { 
             background: #f0f2f5; border: none; border-radius: 6px; padding: 2px 6px; 
             font-size: 0.8rem; color: #555; outline: none; font-weight: bold; cursor: pointer;
         }
-        /* 下载小图标 */
         .dl-icon { text-decoration: none; font-size: 1.2rem; filter: grayscale(100%); opacity: 0.7; transition: 0.2s; }
         .dl-icon:hover, .dl-icon:active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
         
-        audio { display: none; } /* 隐藏原生播放器 */
+        audio { display: none; }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="header">
             <h2 id="title">加载中</h2>
-            <a href="index.html" class="back-btn">返回目录</a>
+            
+            <!-- 💡 核心改动：使用 history.back() 替代原有的 href="index.html" -->
+            <!-- 并且加入防错机制：如果用户是直接输入网址进来的(没有上一页)，则跳回 index.html -->
+            <button onclick="goBack()" class="back-btn">返回</button>
+            
         </div>
         <div id="list"></div>
     </div>
     <script>
+        // 💡 返回上一页逻辑：完美保留上一页的滚动位置和展开状态
+        function goBack() {
+            if (document.referrer) {
+                window.history.back(); // 浏览器原生后退（不刷新，保留状态）
+            } else {
+                window.location.href = 'index.html'; // 保底机制
+            }
+        }
+
         const p = new URLSearchParams(window.location.search);
         const id = p.get('id'), name = p.get('name'), count = parseInt(p.get('count'));
         document.getElementById('title').innerText = name || "未知书卷";
@@ -109,9 +124,6 @@
                 </div>`;
         }
 
-        // =========================================
-        // 逻辑控制区
-        // =========================================
         function togglePlay(audioId, btnId) {
             let audio = document.getElementById(audioId);
             let btn = document.getElementById(btnId);
@@ -147,7 +159,6 @@
             }
         }
 
-        // 改变倍速
         function changeSpeed(audioId, speed) {
             let audio = document.getElementById(audioId);
             audio.playbackRate = parseFloat(speed);
@@ -164,7 +175,6 @@
             let audio = document.getElementById(audioId);
             document.getElementById('dur-' + index).innerText = formatTime(audio.duration);
             document.getElementById('seek-' + index).max = audio.duration;
-            // 确保初始化时，如果用户选了别的倍速，能应用上
             let speedSelect = document.getElementById(`seek-${index}`).nextElementSibling.querySelector('.speed-select');
             if (speedSelect) audio.playbackRate = parseFloat(speedSelect.value);
         }
