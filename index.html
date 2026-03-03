@@ -216,5 +216,24 @@
             (!cat.isNt ? otContainer : ntContainer).appendChild(groupDiv);
         });
     </script>
+    <script>
+(function() {
+    // 自动修正音频链接的拦截器
+    const originalUrl = "raw.githubusercontent.com/qbo700/my-bible/main";
+    const proxyUrl = "audio.xishuipang.org";
+
+    // 拦截所有的音频播放请求
+    document.addEventListener('play', function(e) {
+        const audio = e.target;
+        if (audio.tagName === 'AUDIO' && audio.src.includes(originalUrl)) {
+            const newSrc = audio.src.replace(originalUrl, proxyUrl);
+            console.log("检测到卡顿链接，已自动引向溪水旁加速通道:", newSrc);
+            audio.src = newSrc;
+            audio.play(); // 重新加载并播放
+        }
+    }, true);
+})();
+</script>
+    Fix: 使用私有 Worker 加速音频通道
 </body>
 </html>
