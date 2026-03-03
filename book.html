@@ -3,53 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正在播放 - 溪水旁</title>
+    <title>聆听圣言 - 溪水旁</title>
     <style>
         :root { --comic-ink: #311b15; --comic-paper: #fffcf2; --holy-gold: #d4af37; --bg-dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='2' cy='2' r='1'%3E%3C/circle%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='7' cy='7' r='1'%3E%3C/circle%3E%3C/svg%3E"); }
-        body { font-family: -apple-system, sans-serif; background: var(--comic-paper); background-image: var(--bg-dots); margin: 0; padding: 20px; color: var(--comic-ink); }
+        body { font-family: -apple-system, sans-serif; background: var(--comic-paper) var(--bg-dots); margin: 0; padding: 20px; color: var(--comic-ink); }
         .container { max-width: 600px; margin: 40px auto; background: white; border: 3px solid #333; border-radius: 20px; padding: 30px; box-shadow: 10px 10px 0 rgba(0,0,0,0.1); }
         .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #777; font-weight: bold; border-bottom: 2px solid #333; }
         h1 { text-align: center; border-bottom: 3px solid var(--holy-gold); padding-bottom: 10px; }
-        .player-box { background: #fdf5e6; border: 3px solid #333; border-radius: 15px; padding: 25px; margin: 30px 0; text-align: center; box-shadow: 5px 5px 0 rgba(0,0,0,0.05); }
-        audio { width: 100%; margin-top: 15px; }
-        #current-chapter-title { font-weight: bold; color: var(--holy-gold); font-size: 1.3rem; display: block; margin-top: 5px; }
+        
+        /* 增强版播放器盒子 */
+        .player-box { background: #fdf5e6; border: 3px solid #333; border-radius: 15px; padding: 25px; margin: 30px 0; text-align: center; }
+        audio { width: 100%; margin: 15px 0; }
+        
+        /* 播放控制工具栏 */
+        .controls-row { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px; }
+        .speed-control select { padding: 5px 10px; border: 2px solid #333; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .download-btn { background: #333; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: bold; transition: 0.2s; }
+        .download-btn:hover { background: var(--holy-gold); color: #333; }
+
         .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 12px; margin-top: 20px; }
         .chapter-item { background: white; border: 2.5px solid #333; border-radius: 10px; padding: 12px 0; text-align: center; cursor: pointer; transition: 0.2s; font-weight: bold; box-shadow: 3px 3px 0 rgba(0,0,0,0.05); }
-        .chapter-item:hover { transform: translateY(-3px); background: #fdf2d0; }
-        .chapter-item.active { background: var(--holy-gold); color: white; border-color: #333; box-shadow: none; transform: translateY(2px); }
+        .chapter-item.active { background: var(--holy-gold); color: white; border-color: #333; transform: translateY(2px); box-shadow: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="index.html" class="back-link">🔙 返回目录</a>
-        <h1 id="book-title">加载中...</h1>
+        <h1 id="book-title">书卷加载中</h1>
         <div class="player-box">
-            <span>正在播放</span>
-            <span id="current-chapter-title">第 01 章</span>
-            <audio id="main-player" controls preload="auto">您的浏览器不支持音频。</audio>
+            <div style="font-weight: bold;">正在播放：<span id="cur-chap">第 01 章</span></div>
+            <audio id="audio-p" controls preload="auto"></audio>
+            
+            <div class="controls-row">
+                <div class="speed-control">
+                    速度：
+                    <select id="speed-sel">
+                        <option value="0.75">0.75x</option>
+                        <option value="1.0" selected>1.0x (正常)</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2.0">2.0x</option>
+                    </select>
+                </div>
+                <a id="dl-link" href="#" class="download-btn">📥 点击下载本章</a>
+            </div>
         </div>
         <div id="chapter-list" class="chapter-grid"></div>
     </div>
+
     <script>
         const params = new URLSearchParams(window.location.search);
         const bookId = params.get('id'); const bookName = params.get('name'); const chapterCount = parseInt(params.get('count'));
         const r2BaseUrl = "https://audio.xishuipang.org/"; 
+        const player = document.getElementById('audio-p');
+        const dlLink = document.getElementById('dl-link');
+        const speedSel = document.getElementById('speed-sel');
+
         document.getElementById('book-title').innerText = bookName;
-        const player = document.getElementById('main-player');
-        const chapterTitle = document.getElementById('current-chapter-title');
-        const listContainer = document.getElementById('chapter-list');
+        
+        // 倍速控制
+        speedSel.onchange = () => { player.playbackRate = parseFloat(speedSel.value); };
+
+        // 强制下载逻辑：使用 fetch 转 Blob，确保浏览器弹出保存框而不是播放
+        dlLink.onclick = async (e) => {
+            if (dlLink.href === "#" || !dlLink.getAttribute('data-url')) return;
+            e.preventDefault();
+            const originalText = dlLink.innerText;
+            dlLink.innerText = "准备中...";
+            try {
+                const response = await fetch(dlLink.getAttribute('data-url'));
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${bookName}-${document.getElementById('cur-chap').innerText}.mp3`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } catch (err) { alert("下载失败，请长按播放器选择保存"); }
+            dlLink.innerText = originalText;
+        };
+
         for (let i = 1; i <= chapterCount; i++) {
             const btn = document.createElement('div'); btn.className = 'chapter-item'; btn.innerText = i;
-            btn.onclick = () => playChapter(i, btn); listContainer.appendChild(btn);
+            btn.onclick = () => playChapter(i, btn);
+            document.getElementById('chapter-list').appendChild(btn);
             if (i === 1) playChapter(1, btn);
         }
-        function playChapter(num, element) {
+
+        function playChapter(num, el) {
             const chapterStr = num.toString().padStart(2, '0');
-            const audioUrl = `${r2BaseUrl}${bookId}/audio/${chapterStr}.mp3`;
-            player.src = audioUrl; player.load(); player.play().catch(e => console.log("Wait for click"));
-            chapterTitle.innerText = `第 ${chapterStr} 章`;
-            document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
+            const audioUrl = `${r2BaseUrl}${bookId}/${chapterStr}.mp3`;
+            
+            player.src = audioUrl;
+            player.playbackRate = parseFloat(speedSel.value); // 保持倍速
+            player.load();
+            player.play().catch(e => console.log("等待交互"));
+
+            document.getElementById('cur-chap').innerText = `第 ${chapterStr} 章`;
+            dlLink.setAttribute('data-url', audioUrl); // 给下载按钮存地址
+            document.querySelectorAll('.chapter-item').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
         }
     </script>
 </body>
