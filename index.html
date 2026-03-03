@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>溪水旁 - 圣经音频全库</title>
+    <title>圣经音频全库 - 聆听圣言</title>
     <style>
         :root { 
             --holy-brown: #5d4037; 
@@ -15,58 +15,44 @@
             --bg-waves: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath fill='%23faf4e5' d='M0 160V120.3C13.3 118 26.6 115.7 39.9 107C53.2 98.3 66.5 83.2 79.8 77C93.1 70.8 106.4 73.5 119.7 77.2C133 80.9 146.3 85.6 160 81.3V160H0Z'%3E%3C/path%3E%3C/svg%3E");
             --comic-border: 2px solid #333333;
         }
-        
         * { box-sizing: border-box; }
         body { 
             font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; 
-            background-color: var(--comic-paper); 
-            background-image: var(--bg-dots); 
-            margin: 0; padding: 0; color: var(--comic-ink); 
-            -webkit-tap-highlight-color: transparent; 
+            background-color: var(--comic-paper); background-image: var(--bg-dots); 
+            margin: 0; padding: 0; color: var(--comic-ink); -webkit-tap-highlight-color: transparent; 
         }
-        
         .hero { 
             background: linear-gradient(to bottom, rgba(62, 39, 35, 0.8), rgba(93, 64, 55, 0.9)), 
                         url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80');
             background-size: cover; background-position: center; color: white; 
-            padding: 90px 20px 100px; text-align: center; 
-            border-bottom: 5px solid #333; 
+            padding: 90px 20px 100px; text-align: center; border-bottom: 5px solid #333; position: relative;
         }
         .hero h1 { font-size: 2.8rem; margin: 0; letter-spacing: 7px; font-weight: 400; text-shadow: 4px 6px 15px rgba(0,0,0,0.6); }
         .hero p { font-size: 1.2rem; margin-top: 20px; opacity: 0.95; font-style: italic; letter-spacing: 1.5px; }
-        
         .main { max-width: 950px; margin: -60px auto 0; padding: 0 15px 70px; position: relative; z-index: 10; }
-        .testament-label { display: flex; align-items: center; justify-content: center; margin: 70px 0 50px; }
-        .testament-label span { background: var(--comic-paper); border: 3px solid #333; padding: 12px 40px; border-radius: 40px; font-size: 1.5rem; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); letter-spacing: 3px; }
-        
+        .testament-label { display: flex; align-items: center; justify-content: center; margin: 70px 0 50px; color: var(--holy-brown); font-weight: bold; }
+        .testament-label span { background: var(--comic-paper); border: 3px solid #333; padding: 12px 40px; border-radius: 40px; font-size: 1.5rem; margin: 0 20px; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); letter-spacing: 3px; }
         .category-group { margin-bottom: 30px; background: #ffffff; border-radius: 20px; box-shadow: 8px 10px 0 rgba(93, 64, 55, 0.06); overflow: hidden; border: 3px solid #333; }
         .category-trigger-btn { 
             width: 100%; padding: 25px; 
-            background: linear-gradient(to right, #ffffff 60%, var(--comic-accent)), var(--bg-waves);
-            background-size: cover; border: none; border-bottom: 3px solid #eee; cursor: pointer;
-            display: flex; align-items: center; justify-content: space-between;
+            background: linear-gradient(to right, #ffffff 60%, var(--comic-accent)), var(--bg-waves); 
+            background-size: cover; border: none; border-bottom: 3px solid #eee; outline: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s;
         }
-        
-        .trigger-left { display: flex; align-items: center; gap: 18px; }
-        .category-icon { font-size: 2.3rem; color: var(--holy-gold); }
-        .category-name { font-size: 1.35rem; font-weight: bold; }
-        .trigger-arrow { font-size: 1.1rem; transition: transform 0.4s; }
-        
-        .grid-collapse-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.6s ease; background-image: var(--bg-dots); }
+        .trigger-left { display: flex; align-items: center; gap: 18px; color: #333; }
+        .category-icon { font-size: 2.3rem; width: 45px; text-align: center; color: var(--holy-gold); filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
+        .category-name { font-size: 1.35rem; font-weight: bold; letter-spacing: 1.5px; }
+        .trigger-arrow { font-size: 1.1rem; color: #999; transition: transform 0.4s ease; }
+        .grid-collapse-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1); background-image: var(--bg-dots); }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 30px; border-top: 3px solid #eee; }
         .category-group.active .grid-collapse-wrapper { max-height: 1500px; }
-        .category-group.active .trigger-arrow { transform: rotate(180deg); }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; padding: 30px; }
-        
+        .category-group.active .trigger-arrow { transform: rotate(180deg); color: var(--holy-gold); }
+        .category-group.active .category-trigger-btn { border-bottom-color: #333; background: #fdf2d0; }
         .book-card { 
-            background: #ffffff; border: 3px solid #333; border-radius: 12px; text-decoration: none; color: #333;
-            height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 4px 5px 0 rgba(0,0,0,0.05);
+            background: #ffffff; border: 3px solid #333; border-radius: 12px; text-decoration: none; color: #333; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); position: relative; overflow: hidden; box-shadow: 4px 5px 0 rgba(0,0,0,0.05); background-image: var(--bg-dots);
         }
-        .book-card:hover { transform: translateY(-5px) scale(1.05); border-color: var(--holy-gold); }
-        .book-card .name { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
-        .book-card .count { font-size: 0.8rem; background: var(--holy-gold); border: 2px solid #333; padding: 2px 10px; border-radius: 20px; font-weight: bold; }
-
+        .book-card:hover { transform: translateY(-8px) rotate(2deg); box-shadow: 12px 15px 0 rgba(93, 64, 55, 0.12); border-color: var(--holy-gold); }
+        .book-card .name { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; z-index: 5; }
+        .book-card .count { font-size: 0.8rem; background-color: var(--holy-gold); border: 2px solid #333; padding: 4px 14px; border-radius: 20px; font-weight: bold; position: relative; z-index: 5; box-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
         .footer { text-align: center; padding: 60px 20px; color: #a0938e; font-size: 0.95rem; border-top: 3px solid #333; margin-top: 40px; background-image: var(--bg-dots); }
     </style>
 </head>
@@ -75,14 +61,12 @@
         <h1>圣经音频全库</h1>
         <p>“人活着不是单靠食物，乃是靠神口里所出的一切话”</p>
     </div>
-    
     <div class="main">
         <div class="testament-label"><span>旧约圣经</span></div>
         <div id="ot-container"></div>
         <div class="testament-label"><span>新约圣经</span></div>
         <div id="nt-container"></div>
     </div>
-    
     <div class="footer">© 溪水旁 · 纯净圣言分布式存储 · 2026</div>
 
     <script>
@@ -115,13 +99,7 @@
             
             const triggerBtn = document.createElement('button');
             triggerBtn.className = 'category-trigger-btn';
-            triggerBtn.innerHTML = `
-                <div class="trigger-left">
-                    <span class="category-icon">${cat.icon}</span>
-                    <span class="category-name">${cat.label}</span>
-                </div>
-                <span class="trigger-arrow">▼</span>
-            `;
+            triggerBtn.innerHTML = `<div class="trigger-left"><span class="category-icon">${cat.icon}</span><span class="category-name">${cat.label}</span></div><span class="trigger-arrow">▼</span>`;
             triggerBtn.onclick = () => groupDiv.classList.toggle('active');
             
             const collapseWrapper = document.createElement('div');
@@ -133,7 +111,7 @@
                 const b = bibleData[bookCursor];
                 const a = document.createElement('a');
                 a.className = 'book-card';
-                // 修正：将 ID 统一加上 bible- 前缀，适配 R2 文件夹结构
+                // 核心修复：id 传参时补上 bible- 前缀以对应 R2 文件夹
                 a.href = `book.html?id=bible-${b.id}&name=${encodeURIComponent(b.n)}&count=${b.c}`;
                 a.innerHTML = `<div class="name">${b.n}</div><div class="count">${b.c} 章</div>`;
                 gridDiv.appendChild(a);
