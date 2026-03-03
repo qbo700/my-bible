@@ -3,86 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正在聆听 - 溪水旁</title>
+    <title>聆听圣言 - 溪水旁</title>
     <style>
         :root { 
             --comic-ink: #311b15; --comic-paper: #fffcf2; --holy-gold: #d4af37;
             --bg-dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='2' cy='2' r='1'%3E%3C/circle%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='7' cy='7' r='1'%3E%3C/circle%3E%3C/svg%3E");
         }
-        body { font-family: sans-serif; background: var(--comic-paper); background-image: var(--bg-dots); margin: 0; padding: 20px; color: var(--comic-ink); }
-        .container { max-width: 600px; margin: 0 auto; background: white; border: 3px solid #333; border-radius: 20px; padding: 30px; box-shadow: 10px 10px 0 rgba(0,0,0,0.1); }
-        h1 { text-align: center; margin-bottom: 10px; }
-        .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #777; font-weight: bold; }
-        
-        /* 播放器容器 */
-        .player-box { background: #fdf5e6; border: 2px dashed #333; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center; }
+        body { font-family: -apple-system, sans-serif; background: var(--comic-paper); background-image: var(--bg-dots); margin: 0; padding: 20px; color: var(--comic-ink); }
+        .container { max-width: 600px; margin: 40px auto; background: white; border: 3px solid #333; border-radius: 20px; padding: 30px; box-shadow: 10px 10px 0 rgba(0,0,0,0.1); }
+        .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #777; font-weight: bold; border-bottom: 2px solid #333; }
+        h1 { text-align: center; border-bottom: 3px solid var(--holy-gold); padding-bottom: 10px; }
+        .player-box { background: #fdf5e6; border: 3px solid #333; border-radius: 15px; padding: 25px; margin: 30px 0; text-align: center; box-shadow: 5px 5px 0 rgba(0,0,0,0.05); }
         audio { width: 100%; margin-top: 15px; }
-        #current-chapter-title { font-weight: bold; color: var(--holy-gold); font-size: 1.2rem; }
-
-        /* 章节列表 */
-        .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; }
+        #current-chapter-title { font-weight: bold; color: var(--holy-gold); font-size: 1.3rem; display: block; margin-top: 5px; }
+        .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 12px; margin-top: 20px; }
         .chapter-item { 
-            background: white; border: 2px solid #333; border-radius: 8px; padding: 10px 0; text-align: center; cursor: pointer; transition: 0.2s; font-weight: bold;
+            background: white; border: 2.5px solid #333; border-radius: 10px; padding: 12px 0; text-align: center; cursor: pointer; transition: 0.2s; font-weight: bold; box-shadow: 3px 3px 0 rgba(0,0,0,0.05);
         }
-        .chapter-item:hover { background: #fdf2d0; transform: scale(1.05); }
-        .chapter-item.active { background: var(--holy-gold); color: white; border-color: var(--holy-gold); }
+        .chapter-item:hover { transform: translateY(-3px); background: #fdf2d0; }
+        .chapter-item.active { background: var(--holy-gold); color: white; border-color: #333; box-shadow: none; transform: translateY(2px); }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-link">← 返回目录</a>
-        <h1 id="book-title">书卷名称</h1>
-        
+        <a href="index.html" class="back-link">🔙 返回目录</a>
+        <h1 id="book-title">加载中...</h1>
         <div class="player-box">
-            <div>正在播放：<span id="current-chapter-title">第 01 章</span></div>
-            <audio id="main-player" controls preload="auto">
-                您的浏览器不支持音频播放。
-            </audio>
+            <span>正在播放</span>
+            <span id="current-chapter-title">第 01 章</span>
+            <audio id="main-player" controls preload="auto">您的浏览器不支持音频。</audio>
         </div>
-
-        <h3>章节选择</h3>
         <div id="chapter-list" class="chapter-grid"></div>
     </div>
 
     <script>
-        // 解析 URL 参数
         const params = new URLSearchParams(window.location.search);
         const bookId = params.get('id'); // bible-1Kings
         const bookName = params.get('name');
         const chapterCount = parseInt(params.get('count'));
-
-        const r2BaseUrl = "https://audio.xishuipang.org/"; // R2 根目录
-        const player = document.getElementById('main-player');
-        const chapterTitle = document.getElementById('current-chapter-title');
+        const r2BaseUrl = "https://audio.xishuipang.org/"; 
 
         document.getElementById('book-title').innerText = bookName;
-
-        // 生成章节列表
+        const player = document.getElementById('main-player');
+        const chapterTitle = document.getElementById('current-chapter-title');
         const listContainer = document.getElementById('chapter-list');
+
         for (let i = 1; i <= chapterCount; i++) {
             const btn = document.createElement('div');
             btn.className = 'chapter-item';
             btn.innerText = i;
             btn.onclick = () => playChapter(i, btn);
             listContainer.appendChild(btn);
-            
-            // 默认选中第一章
             if (i === 1) playChapter(1, btn);
         }
 
         function playChapter(num, element) {
-            // 补齐两位数
             const chapterStr = num.toString().padStart(2, '0');
-            
-            // 拼接 R2 路径：域名 + 文件夹(如 bible-1Kings) + /audio/ + 文件名(01.mp3)
+            // 拼接 R2 路径：https://audio.xishuipang.org/bible-1Kings/audio/01.mp3
             const audioUrl = `${r2BaseUrl}${bookId}/audio/${chapterStr}.mp3`;
-            
-            // 更新播放器
             player.src = audioUrl;
-            player.load(); // 必须调用，确保 iOS 重新建立连接
-            player.play().catch(e => console.log("等待用户点击开始播放"));
-
-            // 更新 UI
+            player.load();
+            player.play().catch(e => console.log("等待手动点击播放"));
             chapterTitle.innerText = `第 ${chapterStr} 章`;
             document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
