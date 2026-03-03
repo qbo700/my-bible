@@ -2,204 +2,90 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>聆听圣言</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在聆听 - 溪水旁</title>
     <style>
-        :root { --primary: #5d4037; --accent: #27ae60; --bg: #f8f9fa; }
-        body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 12px; -webkit-tap-highlight-color: transparent; }
-        .box { max-width: 700px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; margin-bottom: 25px; }
-        .header h2 { font-size: 1.7rem; color: var(--primary); margin: 0; }
-        
-        /* 💡 略微优化了返回按钮的点击手感 */
-        .back-btn { font-size: 1rem; color: #7f8c8d; text-decoration: none; border: 1.5px solid #dcdfe6; padding: 6px 18px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.2s; background: transparent; }
-        .back-btn:active { background: #f0f0f0; transform: scale(0.95); }
-        
-        .chapter-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-        .chapter-title { font-size: 1.4rem; font-weight: bold; color: var(--primary); display: block; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; }
-        
-        /* 定制播放器容器 */
-        .custom-player { display: flex; align-items: center; gap: 15px; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
-        
-        /* 超大播放按键 */
-        .giant-play-btn { 
-            width: 65px; height: 65px; border-radius: 50%; background: var(--accent); color: white;
-            border: none; font-size: 26px; cursor: pointer; flex-shrink: 0;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); transition: 0.2s; padding-left: 5px;
+        :root { 
+            --comic-ink: #311b15; --comic-paper: #fffcf2; --holy-gold: #d4af37;
+            --bg-dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='2' cy='2' r='1'%3E%3C/circle%3E%3Ccircle fill='%23d3d3d3' fill-opacity='0.2' cx='7' cy='7' r='1'%3E%3C/circle%3E%3C/svg%3E");
         }
-        .giant-play-btn.is-playing { padding-left: 0; }
-        .giant-play-btn:active { transform: scale(0.92); }
+        body { font-family: sans-serif; background: var(--comic-paper); background-image: var(--bg-dots); margin: 0; padding: 20px; color: var(--comic-ink); }
+        .container { max-width: 600px; margin: 0 auto; background: white; border: 3px solid #333; border-radius: 20px; padding: 30px; box-shadow: 10px 10px 0 rgba(0,0,0,0.1); }
+        h1 { text-align: center; margin-bottom: 10px; }
+        .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #777; font-weight: bold; }
         
-        /* 进度条与控制台 */
-        .progress-wrapper { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .seek-bar { width: 100%; height: 6px; border-radius: 3px; background: #dcdfe6; outline: none; -webkit-appearance: none; margin-bottom: 8px; }
-        .seek-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); cursor: pointer; }
-        
-        /* 时间、倍速、下载 放在同一行 */
-        .controls-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #7f8c8d; font-weight: bold; }
-        .center-tools { display: flex; align-items: center; gap: 10px; }
-        
-        .speed-select { 
-            background: #f0f2f5; border: none; border-radius: 6px; padding: 2px 6px; 
-            font-size: 0.8rem; color: #555; outline: none; font-weight: bold; cursor: pointer;
+        /* 播放器容器 */
+        .player-box { background: #fdf5e6; border: 2px dashed #333; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center; }
+        audio { width: 100%; margin-top: 15px; }
+        #current-chapter-title { font-weight: bold; color: var(--holy-gold); font-size: 1.2rem; }
+
+        /* 章节列表 */
+        .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; }
+        .chapter-item { 
+            background: white; border: 2px solid #333; border-radius: 8px; padding: 10px 0; text-align: center; cursor: pointer; transition: 0.2s; font-weight: bold;
         }
-        .dl-icon { text-decoration: none; font-size: 1.2rem; filter: grayscale(100%); opacity: 0.7; transition: 0.2s; }
-        .dl-icon:hover, .dl-icon:active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
-        
-        audio { display: none; }
+        .chapter-item:hover { background: #fdf2d0; transform: scale(1.05); }
+        .chapter-item.active { background: var(--holy-gold); color: white; border-color: var(--holy-gold); }
     </style>
 </head>
 <body>
-    <div class="box">
-        <div class="header">
-            <h2 id="title">加载中</h2>
-            
-            <!-- 💡 核心改动：使用 history.back() 替代原有的 href="index.html" -->
-            <!-- 并且加入防错机制：如果用户是直接输入网址进来的(没有上一页)，则跳回 index.html -->
-            <button onclick="goBack()" class="back-btn">返回</button>
-            
-        </div>
-        <div id="list"></div>
-    </div>
-    <script>
-        // 💡 返回上一页逻辑：完美保留上一页的滚动位置和展开状态
-        function goBack() {
-            if (document.referrer) {
-                window.history.back(); // 浏览器原生后退（不刷新，保留状态）
-            } else {
-                window.location.href = 'index.html'; // 保底机制
-            }
-        }
-
-        const p = new URLSearchParams(window.location.search);
-        const id = p.get('id'), name = p.get('name'), count = parseInt(p.get('count'));
-        document.getElementById('title').innerText = name || "未知书卷";
-        const list = document.getElementById('list');
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回目录</a>
+        <h1 id="book-title">书卷名称</h1>
         
-        for (let i = 1; i <= count; i++) {
-            let num = i < 10 ? '0' + i : i;
-            let fileName = encodeURIComponent(name) + num + ".mp3";
-            let url = `https://qbo700.github.io/bible-${id}/audio/${fileName}`;
-            let audioId = `audio-${i}`;
-            let btnId = `btn-${i}`;
+        <div class="player-box">
+            <div>正在播放：<span id="current-chapter-title">第 01 章</span></div>
+            <audio id="main-player" controls preload="auto">
+                您的浏览器不支持音频播放。
+            </audio>
+        </div>
+
+        <h3>章节选择</h3>
+        <div id="chapter-list" class="chapter-grid"></div>
+    </div>
+
+    <script>
+        // 解析 URL 参数
+        const params = new URLSearchParams(window.location.search);
+        const bookId = params.get('id'); // bible-1Kings
+        const bookName = params.get('name');
+        const chapterCount = parseInt(params.get('count'));
+
+        const r2BaseUrl = "https://audio.xishuipang.org/"; // R2 根目录
+        const player = document.getElementById('main-player');
+        const chapterTitle = document.getElementById('current-chapter-title');
+
+        document.getElementById('book-title').innerText = bookName;
+
+        // 生成章节列表
+        const listContainer = document.getElementById('chapter-list');
+        for (let i = 1; i <= chapterCount; i++) {
+            const btn = document.createElement('div');
+            btn.className = 'chapter-item';
+            btn.innerText = i;
+            btn.onclick = () => playChapter(i, btn);
+            listContainer.appendChild(btn);
             
-            list.innerHTML += `
-                <div class="chapter-card">
-                    <span class="chapter-title">第 ${i} 章</span>
-                    
-                    <div class="custom-player">
-                        <button id="${btnId}" class="giant-play-btn" onclick="togglePlay('${audioId}', '${btnId}')">▶</button>
-                        
-                        <div class="progress-wrapper">
-                            <input type="range" id="seek-${i}" class="seek-bar" value="0" step="0.1" 
-                                oninput="seekAudio('${audioId}', this.value)" 
-                                onchange="seekAudio('${audioId}', this.value)">
-                            
-                            <div class="controls-row">
-                                <span id="curr-${i}">00:00</span>
-                                
-                                <div class="center-tools">
-                                    <select class="speed-select" onchange="changeSpeed('${audioId}', this.value)">
-                                        <option value="0.75">0.75x</option>
-                                        <option value="1.0" selected>1.0x 倍速</option>
-                                        <option value="1.25">1.25x</option>
-                                        <option value="1.5">1.5x</option>
-                                        <option value="2.0">2.0x</option>
-                                    </select>
-                                    <a href="${url}" download="${name}-第${num}章.mp3" class="dl-icon" title="下载音频">📥</a>
-                                </div>
-                                
-                                <span id="dur-${i}">00:00</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <audio id="${audioId}" src="${url}" preload="none"
-                        ontimeupdate="updateTime('${audioId}', ${i})"
-                        onloadedmetadata="initTime('${audioId}', ${i})"
-                        onerror="handleError('${btnId}')"
-                        onended="resetBtn('${btnId}')"
-                    ></audio>
-                </div>`;
+            // 默认选中第一章
+            if (i === 1) playChapter(1, btn);
         }
 
-        function togglePlay(audioId, btnId) {
-            let audio = document.getElementById(audioId);
-            let btn = document.getElementById(btnId);
+        function playChapter(num, element) {
+            // 补齐两位数
+            const chapterStr = num.toString().padStart(2, '0');
             
-            if (audio.error || btn.innerText === "↻") {
-                audio.load();
-            }
+            // 拼接 R2 路径：域名 + 文件夹(如 bible-1Kings) + /audio/ + 文件名(01.mp3)
+            const audioUrl = `${r2BaseUrl}${bookId}/audio/${chapterStr}.mp3`;
+            
+            // 更新播放器
+            player.src = audioUrl;
+            player.load(); // 必须调用，确保 iOS 重新建立连接
+            player.play().catch(e => console.log("等待用户点击开始播放"));
 
-            if (audio.paused) {
-                document.querySelectorAll('audio').forEach(a => {
-                    if (a.id !== audioId && !a.paused) {
-                        a.pause();
-                        let otherBtn = document.getElementById('btn-' + a.id.split('-')[1]);
-                        if(otherBtn) {
-                            otherBtn.innerText = "▶";
-                            otherBtn.classList.remove('is-playing');
-                        }
-                    }
-                });
-
-                btn.innerText = "⌛";
-                btn.classList.add('is-playing');
-                
-                audio.play().then(() => {
-                    btn.innerText = "⏸";
-                }).catch(e => {
-                    btn.innerText = "↻";
-                });
-            } else {
-                audio.pause();
-                btn.innerText = "▶";
-                btn.classList.remove('is-playing');
-            }
-        }
-
-        function changeSpeed(audioId, speed) {
-            let audio = document.getElementById(audioId);
-            audio.playbackRate = parseFloat(speed);
-        }
-
-        function formatTime(sec) {
-            if (isNaN(sec) || !isFinite(sec)) return "00:00";
-            let m = Math.floor(sec / 60);
-            let s = Math.floor(sec % 60);
-            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
-        }
-
-        function initTime(audioId, index) {
-            let audio = document.getElementById(audioId);
-            document.getElementById('dur-' + index).innerText = formatTime(audio.duration);
-            document.getElementById('seek-' + index).max = audio.duration;
-            let speedSelect = document.getElementById(`seek-${index}`).nextElementSibling.querySelector('.speed-select');
-            if (speedSelect) audio.playbackRate = parseFloat(speedSelect.value);
-        }
-
-        function updateTime(audioId, index) {
-            let audio = document.getElementById(audioId);
-            document.getElementById('curr-' + index).innerText = formatTime(audio.currentTime);
-            document.getElementById('seek-' + index).value = audio.currentTime;
-        }
-
-        function seekAudio(audioId, val) {
-            let audio = document.getElementById(audioId);
-            audio.currentTime = val;
-        }
-
-        function handleError(btnId) {
-            let btn = document.getElementById(btnId);
-            btn.innerText = "↻";
-            btn.classList.add('is-playing');
-        }
-
-        function resetBtn(btnId) {
-            let btn = document.getElementById(btnId);
-            btn.innerText = "▶";
-            btn.classList.remove('is-playing');
+            // 更新 UI
+            chapterTitle.innerText = `第 ${chapterStr} 章`;
+            document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
         }
     </script>
 </body>
